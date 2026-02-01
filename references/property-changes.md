@@ -69,6 +69,20 @@ These properties are deprecated and no longer required:
 |---------|---------|
 | `spring.kafka.retry.topic.backoff.random` | `spring.kafka.retry.topic.backoff.jitter` |
 
+### OTLP / Observability Properties
+
+| Old Key | New Key |
+|---------|---------|
+| `management.otlp.tracing.endpoint` | `management.opentelemetry.tracing.export.endpoint` |
+| `management.otlp.tracing.timeout` | `management.opentelemetry.tracing.export.timeout` |
+| `management.otlp.tracing.compression` | `management.opentelemetry.tracing.export.compression` |
+| `management.otlp.tracing.headers.*` | `management.opentelemetry.tracing.export.headers.*` |
+| `management.otlp.metrics.url` | `management.metrics.export.otlp.url` |
+| `management.otlp.metrics.headers.*` | `management.metrics.export.otlp.headers.*` |
+
+See `references/observability-migration.md` for the complete OTLP
+configuration property tree and environment variable support.
+
 ### Testing Properties
 
 | Old Key | New Key |

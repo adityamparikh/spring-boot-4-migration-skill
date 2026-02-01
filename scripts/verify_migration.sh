@@ -260,6 +260,32 @@ if [ "$MOCKBEAN_COUNT" -eq 0 ] && [ "$SPYBEAN_COUNT" -eq 0 ]; then
     pass "No removed @MockBean/@SpyBean found"
 fi
 
+# --- Observability ---
+echo ""
+echo "--- Observability ---"
+# Check for old OTLP properties
+OTLP_WARNS=0
+for pf in $PROP_FILES; do
+    if grep -q "management\.otlp\.tracing\." "$pf" 2>/dev/null; then
+        warn "Old OTLP tracing property in $pf — moved to management.opentelemetry.tracing.export.*"
+        ((OTLP_WARNS++))
+    fi
+    if grep -q "management\.otlp\.metrics\." "$pf" 2>/dev/null; then
+        warn "Old OTLP metrics property in $pf — moved to management.metrics.export.otlp.*"
+        ((OTLP_WARNS++))
+    fi
+done
+# Check for old individual Micrometer/OTel dependencies that should be replaced by the starter
+if echo "$BUILD_FILES" | xargs grep -q "micrometer-tracing-bridge-otel" 2>/dev/null; then
+    warn "Individual micrometer-tracing-bridge-otel dependency found — consider using spring-boot-starter-opentelemetry instead"
+fi
+if echo "$BUILD_FILES" | xargs grep -q "opentelemetry-exporter-otlp" 2>/dev/null; then
+    warn "Individual opentelemetry-exporter-otlp dependency found — consider using spring-boot-starter-opentelemetry instead"
+fi
+if [ "$OTLP_WARNS" -eq 0 ]; then
+    pass "No deprecated OTLP properties found"
+fi
+
 # --- Track F: Framework 7 ---
 echo ""
 echo "--- Track F: Framework 7 ---"

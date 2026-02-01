@@ -7,6 +7,7 @@ description: >
   another (e.g., 4.0 to 4.1). Covers build file changes (Maven/Gradle),
   modular starter migration, Jackson 3 adoption, Spring Security 7,
   Spring Framework 7, Hibernate 7.1, JUnit 6, Testcontainers 2,
+  observability (OpenTelemetry, Micrometer, Actuator, distributed tracing),
   property key/value changes, package relocations, deprecated API removal,
   testing infrastructure updates, and bridge removal timelines tied to
   minor versions. Supports both all-at-once migration AND gradual
@@ -28,7 +29,7 @@ minor versions with zero guesswork.
 
 This skill covers two scenarios:
 
-1. **Major migration (3.x → 4.0)**: The bulk of this skill — all 8 phases,
+1. **Major migration (3.x → 4.0)**: The bulk of this skill — all 9 phases,
    the gradual upgrade strategy, and the bridge system.
 2. **Minor version upgrades (4.0 → 4.1, 4.1 → 4.2, etc.)**: Tracked in
    `references/minor-version-changes.md`. Minor versions may deprecate
@@ -178,7 +179,29 @@ Key changes:
 9. Elasticsearch: `RestClient` → `Rest5Client`, `RestClientBuilderCustomizer` → `Rest5ClientBuilderCustomizer`
 10. Spring Retry → Spring Framework core resilience (`org.springframework.core.retry`)
 
-### Phase 5: Spring Security 7 Migration
+### Phase 5: Observability Migration
+
+Read `references/observability-migration.md` for complete details.
+
+Boot 4 restructures observability into modular components:
+1. Replace individual Micrometer/OpenTelemetry dependencies with the
+   consolidated `spring-boot-starter-opentelemetry` starter (includes
+   OTel API, Micrometer tracing bridge, OTLP exporters).
+2. Update OTLP properties:
+   - `management.otlp.tracing.*` → `management.opentelemetry.tracing.export.*`
+   - `management.otlp.metrics.*` → `management.metrics.export.otlp.*`
+3. Evaluate whether `spring-boot-starter-actuator` is still needed —
+   OpenTelemetry export now works without Actuator.
+4. If using Brave/Zipkin, replace dependencies with `spring-boot-starter-zipkin`.
+5. If using observation annotations (`@Observed`, `@Timed`, `@Counted`),
+   add `spring-boot-starter-aspectj` and enable with
+   `management.observations.annotations.enabled=true`.
+6. Update any direct references to renamed observability modules:
+   - `spring-boot-metrics` → `spring-boot-micrometer-metrics`
+   - `spring-boot-observation` → `spring-boot-micrometer-observation`
+   - `spring-boot-tracing` → `spring-boot-micrometer-tracing`
+
+### Phase 6: Spring Security 7 Migration
 
 Read `references/spring-security7.md` for complete details.
 
@@ -194,7 +217,7 @@ Key changes:
    use `spring-security.version` instead
 7. OpenSAML 4 removed → migrate to OpenSAML 5
 
-### Phase 6: Testing Infrastructure Migration
+### Phase 7: Testing Infrastructure Migration
 
 Read `references/testing-migration.md` for complete details.
 
@@ -219,7 +242,7 @@ Read `references/testing-migration.md` for complete details.
    used in tests (especially `spring-boot-starter-security-test`,
    `spring-boot-starter-webmvc-test`, `spring-boot-starter-data-jpa-test`)
 
-### Phase 7: Spring Framework 7 Specific Changes
+### Phase 8: Spring Framework 7 Specific Changes
 
 Read `references/spring-framework7.md` for complete details.
 
@@ -236,7 +259,7 @@ Read `references/spring-framework7.md` for complete details.
 7. Hibernate ORM 7.1 — review entity mappings, especially around
    ID generation strategies and schema validation behavior
 
-### Phase 8: Final Verification
+### Phase 9: Final Verification
 
 Run the verification script if available, otherwise manually check:
 
@@ -319,9 +342,10 @@ them. Check the "New and Noteworthy" section of each release's notes.
 | `references/property-changes.md` | Phase 2 / Track C — all property key renames and value changes |
 | `references/jackson3-migration.md` | Phase 3 / Track B — Jackson 3 packages, APIs, compatibility mode |
 | `references/api-changes.md` | Phase 4 — package relocations, removed APIs, renamed classes |
-| `references/spring-security7.md` | Phase 5 / Track D — Security 7 breaking changes and DSL migration |
-| `references/testing-migration.md` | Phase 6 / Track E — MockBean, Testcontainers 2, JUnit 6, RestTestClient |
-| `references/spring-framework7.md` | Phase 7 / Track F — Framework 7 changes, JSpecify, path matching |
+| `references/observability-migration.md` | Phase 5 — OpenTelemetry starter, OTLP properties, module renames, Actuator decoupling |
+| `references/spring-security7.md` | Phase 6 / Track D — Security 7 breaking changes and DSL migration |
+| `references/testing-migration.md` | Phase 7 / Track E — MockBean, Testcontainers 2, JUnit 6, RestTestClient |
+| `references/spring-framework7.md` | Phase 8 / Track F — Framework 7 changes, JSpecify, path matching |
 | `references/minor-version-changes.md` | 4.x minor upgrades — changes per minor version, bridge removals, new features |
 | `scripts/verify_migration.sh` | Phase 8 — bridge-aware verification with PASS/FAIL/WARN/BRIDGE |
 

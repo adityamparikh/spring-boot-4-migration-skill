@@ -51,6 +51,7 @@ references/
   spring-security7.md                 # Security 7 breaking changes, DSL migration, request matchers
   testing-migration.md                # MockitoBean, Testcontainers 2, JUnit 6, RestTestClient
   spring-framework7.md                # JSpecify, path matching, resilience, Hibernate 7.1
+  observability-migration.md          # OpenTelemetry, Micrometer, OTLP, Actuator decoupling
   minor-version-changes.md            # 4.x minor version changes, bridge removals, upgrade checklists
 scripts/
   verify_migration.sh                 # Bridge-aware verification (PASS/FAIL/WARN/BRIDGE)
