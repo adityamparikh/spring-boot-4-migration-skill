@@ -64,4 +64,4 @@ This skill is cross-referenced against:
 
 ## License
 
-MIT
+Apache 2.0
