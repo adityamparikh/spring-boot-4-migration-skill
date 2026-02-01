@@ -115,6 +115,11 @@ Module changes:
 - Remove: `org.elasticsearch.client:elasticsearch-rest-client-sniffer`
 - Use: `co.elastic.clients:elasticsearch-java` (includes sniffer)
 
+### Kafka Streams
+
+`StreamBuilderFactoryBeanCustomizer` removed — use Spring Kafka's
+`StreamsBuilderFactoryBeanConfigurer` instead.
+
 ### Spring Retry → Spring Framework Resilience
 
 ```java

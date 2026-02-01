@@ -13,6 +13,7 @@ Spring Boot 4.0 uses Spring Framework 7.x.
 - [Hibernate ORM 7.1](#hibernate-orm-71)
 - [HTTP Interfaces](#http-interfaces)
 - [Programmatic Bean Registration](#programmatic-bean-registration)
+- [JMS Client API (New)](#jms-client-api-new)
 - [SpEL Improvements](#spel-improvements)
 - [API Versioning (New Feature)](#api-versioning-new-feature)
 
@@ -388,6 +389,30 @@ public class MyBeanRegistrar implements BeanRegistrar {
         registry.registerBean("myBean", MyBean.class);
     }
 }
+```
+
+## JMS Client API (New)
+
+Framework 7 introduces a new fluent `JmsClient` API as a modern
+alternative to `JmsTemplate`, supporting request-reply patterns and
+quality-of-service settings:
+
+```java
+@Autowired
+private JmsClient jmsClient;
+
+// Simple send
+jmsClient.destination("orders").send(order);
+
+// With QoS
+jmsClient.destination("priority-orders")
+    .withPriority(9)
+    .withTimeToLive(Duration.ofMinutes(5))
+    .send(order);
+
+// Request-reply
+OrderConfirmation reply = jmsClient.destination("orders")
+    .sendAndReceive(order, OrderConfirmation.class);
 ```
 
 ## SpEL Improvements

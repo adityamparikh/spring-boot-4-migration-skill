@@ -251,13 +251,13 @@ echo "--- Track E: Testing ---"
 MOCKBEAN_COUNT=$(grep -rn "@MockBean\b" src/test/ 2>/dev/null | wc -l || echo 0)
 SPYBEAN_COUNT=$(grep -rn "@SpyBean\b" src/test/ 2>/dev/null | wc -l || echo 0)
 if [ "$MOCKBEAN_COUNT" -gt 0 ]; then
-    fail "Found $MOCKBEAN_COUNT @MockBean annotations — removed in Boot 4.0, migrate to @MockitoBean"
+    warn "Found $MOCKBEAN_COUNT @MockBean annotations — deprecated in Boot 4.0, migrate to @MockitoBean"
 fi
 if [ "$SPYBEAN_COUNT" -gt 0 ]; then
-    fail "Found $SPYBEAN_COUNT @SpyBean annotations — removed in Boot 4.0, migrate to @MockitoSpyBean"
+    warn "Found $SPYBEAN_COUNT @SpyBean annotations — deprecated in Boot 4.0, migrate to @MockitoSpyBean"
 fi
 if [ "$MOCKBEAN_COUNT" -eq 0 ] && [ "$SPYBEAN_COUNT" -eq 0 ]; then
-    pass "No removed @MockBean/@SpyBean found"
+    pass "No deprecated @MockBean/@SpyBean found"
 fi
 
 # --- Observability ---

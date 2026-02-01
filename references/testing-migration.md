@@ -13,10 +13,11 @@
 
 ## @MockBean / @SpyBean → @MockitoBean / @MockitoSpyBean
 
-`@MockBean` and `@SpyBean` were deprecated in Spring Boot 3.4 and
-**removed in Spring Boot 4.0**. You must migrate to `@MockitoBean` and
-`@MockitoSpyBean` before upgrading. If still on 3.5.x, migrate these
-annotations first — they are available since 3.4.
+`@MockBean` and `@SpyBean` were deprecated in Spring Boot 3.4.
+In Boot 4.0 they remain present but **deprecated** and will be removed
+in a future release. Migrate to `@MockitoBean` and `@MockitoSpyBean`
+(available since 3.4). Additionally, `MockitoTestExecutionListener` is
+removed — use `MockitoExtension` directly via `@ExtendWith(MockitoExtension.class)`.
 
 ### Basic Replacement
 
@@ -97,7 +98,21 @@ class MyTest {
 }
 ```
 
+### HtmlUnit Settings
+
+HtmlUnit configuration in `@AutoConfigureMockMvc` has moved:
+```java
+// Boot 3.x
+@AutoConfigureMockMvc(webClientEnabled = false)
+
+// Boot 4.0
+@AutoConfigureMockMvc(htmlUnit = @HtmlUnit(webClient = false))
+```
+
 ### TestRestTemplate
+
+`TestRestTemplate` has been relocated to `org.springframework.boot.resttestclient`
+and requires `spring-boot-resttestclient` + `spring-boot-restclient` dependencies.
 
 ```java
 // Boot 4.0 — Must explicitly enable

@@ -121,6 +121,20 @@ public class NotificationService {
 }
 ```
 
+### AMQP and Kafka Retry
+
+AMQP and Kafka retry infrastructure has moved from Spring Retry to
+Spring Framework. If using retry customizers, update:
+
+```java
+// Old (Spring Retry-based)
+RetryOperationsInterceptor interceptor = ...;
+
+// Boot 4 (Spring Framework-based)
+RabbitTemplateRetrySettingsCustomizer templateCustomizer = ...;
+RabbitListenerRetrySettingsCustomizer listenerCustomizer = ...;
+```
+
 ## Migration from Spring Retry
 
 ### OpenRewrite Automation
