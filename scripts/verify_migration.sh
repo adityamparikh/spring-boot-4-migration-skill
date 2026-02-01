@@ -1,10 +1,11 @@
 #!/usr/bin/env bash
-# Spring Boot 4.0 Migration Verification Script
+# Spring Boot 4.x Migration Verification Script
 # Run from the root of a migrated Spring Boot project.
 # Usage: bash verify_migration.sh [maven|gradle]
 #
 # Supports both all-at-once and gradual migration strategies.
 # Reports bridge status so you know which tracks are still in progress.
+# Works for any 4.x version (4.0, 4.1, 4.2, etc.).
 
 set -euo pipefail
 
@@ -41,7 +42,7 @@ else
     BUILD_FILES=$(find . \( -name "build.gradle" -o -name "build.gradle.kts" \) -not -path "*/.gradle/*" 2>/dev/null)
 fi
 
-echo "=== Spring Boot 4.0 Migration Verification ==="
+echo "=== Spring Boot 4.x Migration Verification ==="
 echo "Build tool: $BUILD_TOOL"
 echo ""
 

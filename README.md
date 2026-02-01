@@ -1,13 +1,14 @@
 # Spring Boot 4 Migration Skill
 
-A comprehensive [Claude Code skill](https://docs.anthropic.com/en/docs/claude-code) for migrating Spring Boot 3.x applications to Spring Boot 4.0.
+A comprehensive [Claude Code skill](https://code.claude.com/docs/en/skills) for migrating Spring Boot 3.x applications to Spring Boot 4.x and staying current across 4.x minor versions.
 
 ## What This Skill Does
 
-When installed, this skill gives Claude Code deep knowledge of every breaking change in Spring Boot 4.0 and guides you through migration step-by-step. It supports:
+When installed, this skill gives Claude Code deep knowledge of every breaking change in Spring Boot 4.x and guides you through migration step-by-step. It supports:
 
 - **Two migration strategies**: All-at-once (8 sequential phases) or gradual upgrade (Day-1 baseline with 6 independent tracks)
 - **Compatibility bridges**: `spring-boot-starter-classic`, `spring-boot-jackson2`, `spring-security-access` for incremental adoption
+- **Minor version tracking**: Bridge removal timelines, deprecation promotions, and new features for 4.1, 4.2, and beyond
 - **Comprehensive coverage**: Build files, modular starters, Jackson 3, properties, package relocations, Spring Security 7, testing (MockitoBean, Testcontainers 2, JUnit 6), Spring Framework 7, Hibernate 7.1
 - **Verification script**: Bridge-aware PASS/FAIL/WARN/BRIDGE checks
 - **Enterprise rollout**: Wave-based strategy for organizations with many services
@@ -32,6 +33,8 @@ In Claude Code, say any of:
 - "Upgrade to Spring Boot 4"
 - "Spring Boot 4 migration"
 - "Gradual upgrade to Boot 4"
+- "Upgrade to Spring Boot 4.1"
+- "Update Boot minor version"
 
 The skill will activate automatically and guide you through the migration.
 
@@ -48,6 +51,7 @@ references/
   spring-security7.md                 # Security 7 breaking changes, DSL migration, request matchers
   testing-migration.md                # MockitoBean, Testcontainers 2, JUnit 6, RestTestClient
   spring-framework7.md                # JSpecify, path matching, resilience, Hibernate 7.1
+  minor-version-changes.md            # 4.x minor version changes, bridge removals, upgrade checklists
 scripts/
   verify_migration.sh                 # Bridge-aware verification (PASS/FAIL/WARN/BRIDGE)
 ```

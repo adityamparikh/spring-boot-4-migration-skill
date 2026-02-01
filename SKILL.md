@@ -1,33 +1,53 @@
 ---
 name: spring-boot-4-migration
 description: >
-  Migrate Spring Boot 3.x applications to Spring Boot 4.0. Use when
-  upgrading any Spring Boot project from 3.x to 4.0, including build file
-  changes (Maven/Gradle), modular starter migration, Jackson 3 adoption,
-  Spring Security 7, Spring Framework 7, Hibernate 7.1, JUnit 6,
-  Testcontainers 2, property key/value changes, package relocations,
-  deprecated API removal, and testing infrastructure updates. Supports
-  both all-at-once migration AND gradual incremental upgrade using
-  compatibility bridges. Covers Java and Kotlin projects using Maven or
-  Gradle (Groovy/Kotlin DSL).
+  Migrate Spring Boot 3.x applications to Spring Boot 4.x and stay current
+  across 4.x minor versions (4.0, 4.1, 4.2, etc.). Use when upgrading any
+  Spring Boot project from 3.x to 4.0, OR from one 4.x minor version to
+  another (e.g., 4.0 to 4.1). Covers build file changes (Maven/Gradle),
+  modular starter migration, Jackson 3 adoption, Spring Security 7,
+  Spring Framework 7, Hibernate 7.1, JUnit 6, Testcontainers 2,
+  property key/value changes, package relocations, deprecated API removal,
+  testing infrastructure updates, and bridge removal timelines tied to
+  minor versions. Supports both all-at-once migration AND gradual
+  incremental upgrade using compatibility bridges. Covers Java and Kotlin
+  projects using Maven or Gradle (Groovy/Kotlin DSL).
   Trigger on: "upgrade to Spring Boot 4", "migrate to Boot 4",
   "Spring Boot 4 migration", "upgrade spring boot", "gradual upgrade",
-  or any request involving moving a Spring Boot 3.x project to 4.0.
+  "upgrade to 4.1", "Spring Boot 4.1", "update Boot minor version",
+  or any request involving moving a Spring Boot 3.x project to 4.x
+  or upgrading between 4.x minor versions.
 ---
 
 # Spring Boot 4 Migration Skill
 
-Migrate Spring Boot 3.x applications to 4.0 with zero guesswork.
+Migrate Spring Boot 3.x applications to 4.x and stay current across
+minor versions with zero guesswork.
+
+## Scope: 3.x → 4.0 and 4.x Minor Versions
+
+This skill covers two scenarios:
+
+1. **Major migration (3.x → 4.0)**: The bulk of this skill — all 8 phases,
+   the gradual upgrade strategy, and the bridge system.
+2. **Minor version upgrades (4.0 → 4.1, 4.1 → 4.2, etc.)**: Tracked in
+   `references/minor-version-changes.md`. Minor versions may deprecate
+   APIs, remove compatibility bridges, change defaults, and introduce new
+   features. Check that file before bumping to any new 4.x minor version.
 
 ## Prerequisites
 
-Before starting, verify:
+### For 3.x → 4.0 migration:
 - Source project compiles and tests pass on Spring Boot 3.5.x (latest patch)
 - Java 17+ is available (Java 21+ recommended, Java 25 supported)
 - All deprecated API calls from Boot 3.x are resolved where possible
+- If on Boot 3.4 or earlier, first upgrade to 3.5.x before proceeding
 
-If the project is on Boot 3.4 or earlier, first upgrade to 3.5.x before
-proceeding with the 4.0 migration.
+### For 4.x → 4.y minor version upgrade:
+- Project is on the latest patch of the current minor version (e.g., 4.0.x latest)
+- Review `references/minor-version-changes.md` for the target version
+- Check the official release notes for the target version
+- Resolve any deprecation warnings from the current version
 
 ## Choose Your Migration Strategy
 
@@ -228,6 +248,48 @@ Run the verification script if available, otherwise manually check:
 6. Run integration tests against each active Spring profile
 7. Verify Docker image builds if using buildpacks or Jib
 
+## Minor Version Upgrades (4.0 → 4.1, 4.1 → 4.2, etc.)
+
+When upgrading between Spring Boot 4.x minor versions, follow this process:
+
+### 1. Check What Changed
+
+Read `references/minor-version-changes.md` for the target version. Also
+consult the official release notes:
+- https://github.com/spring-projects/spring-boot/wiki (Release Notes per version)
+- https://docs.spring.io/spring-boot/upgrading.html
+
+### 2. Bridge Removal Awareness
+
+Minor versions are where compatibility bridges get removed. Before
+upgrading, check whether any bridges you depend on are being dropped:
+
+| Bridge | Introduced | Expected Removal |
+|--------|-----------|-----------------|
+| `spring-boot-jackson2` | 4.0 | 4.1 or 4.2 |
+| `spring-boot-starter-classic` | 4.0 | 5.0 |
+| `spring-boot-starter-test-classic` | 4.0 | 5.0 |
+| Deprecated starter names | 4.0 | 5.0 |
+
+If you are still using a bridge that is being removed in the target
+version, complete the corresponding migration track BEFORE upgrading.
+
+### 3. Upgrade Process
+
+1. Update the Spring Boot version in your build file to the target
+   minor version's latest patch release.
+2. Run `mvn compile` / `gradle compileJava` — fix any new compilation errors.
+3. Run the full test suite — fix any test failures.
+4. Review deprecation warnings in both build output and application logs.
+   These signal what will break in the NEXT minor version.
+5. Run `verify_migration.sh` to confirm migration state.
+
+### 4. New Features
+
+Each minor version introduces new features and auto-configurations.
+These are opt-in and don't require action, but you may want to adopt
+them. Check the "New and Noteworthy" section of each release's notes.
+
 ## Troubleshooting
 
 ### Common Compilation Errors
@@ -260,6 +322,7 @@ Run the verification script if available, otherwise manually check:
 | `references/spring-security7.md` | Phase 5 / Track D — Security 7 breaking changes and DSL migration |
 | `references/testing-migration.md` | Phase 6 / Track E — MockBean, Testcontainers 2, JUnit 6, RestTestClient |
 | `references/spring-framework7.md` | Phase 7 / Track F — Framework 7 changes, JSpecify, path matching |
+| `references/minor-version-changes.md` | 4.x minor upgrades — changes per minor version, bridge removals, new features |
 | `scripts/verify_migration.sh` | Phase 8 — bridge-aware verification with PASS/FAIL/WARN/BRIDGE |
 
 ## Official Sources
