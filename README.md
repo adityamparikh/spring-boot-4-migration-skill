@@ -75,6 +75,15 @@ This skill is cross-referenced against:
 - [Dan Vega — Spring Boot 4 Is Here](https://www.danvega.dev/blog/spring-boot-4-is-here)
 - [Dan Vega — sb4 Sample Project](https://github.com/danvega/sb4)
 
+## FAQ
+
+### Do I need to specify sub-agents?
+
+No. This is a single, self-contained skill — no sub-agents or additional agent
+configuration is required. The "6 independent tracks" mentioned in the gradual
+upgrade strategy are conceptual work areas that teams can tackle in parallel,
+not separate agents. Install the skill and Claude Code uses it as one unit.
+
 ## License
 
 Apache 2.0
