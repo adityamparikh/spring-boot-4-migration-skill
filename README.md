@@ -6,6 +6,7 @@ A comprehensive [Claude Code skill](https://code.claude.com/docs/en/skills) for 
 
 When installed, this skill gives Claude Code deep knowledge of every breaking change in Spring Boot 4.x and guides you through migration step-by-step. It supports:
 
+- **Toolchain version check**: Detects unsupported Java, Kotlin, Maven, and Gradle versions and guides upgrades before migration begins
 - **Two migration strategies**: All-at-once (9 sequential phases) or gradual upgrade (Day-1 baseline with 6 independent tracks)
 - **Compatibility bridges**: `spring-boot-starter-classic`, `spring-boot-jackson2`, `spring-security-access` for incremental adoption
 - **Minor version tracking**: Bridge removal timelines, deprecation promotions, and new features for 4.1, 4.2, and beyond
@@ -44,7 +45,7 @@ The skill will activate automatically and guide you through the migration.
 SKILL.md                              # Main skill definition (phases, workflow, troubleshooting)
 references/
   gradual-upgrade-strategy.md         # Dependency graph, bridges, independent tracks, enterprise rollout
-  build-and-dependencies.md           # Full modular starter mapping (70+ starters), build plugin changes
+  build-and-dependencies.md           # Version requirements, modular starter mapping (70+ starters), build plugin changes
   property-changes.md                 # All property key renames and value changes
   jackson3-migration.md               # Jackson 3 packages, APIs, compatibility mode, OpenRewrite
   api-changes.md                      # Package relocations, removed APIs, renamed classes
