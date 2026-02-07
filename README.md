@@ -58,6 +58,7 @@ references/
   resilience-migration.md             # Spring Retry → Framework 7, @Retryable, @ConcurrencyLimit
   aot-native.md                       # AOT processing, BeanRegistrar, RuntimeHints, GraalVM 25
   minor-version-changes.md            # 4.x minor version changes, bridge removals, upgrade checklists
+  comparison-with-copilot-instructions.md  # FAQ comparing this skill with the awesome-copilot-instructions guide
 scripts/
   verify_migration.sh                 # Bridge-aware verification (PASS/FAIL/WARN/BRIDGE)
 ```
@@ -123,6 +124,16 @@ work like Security DSL rewrites and behavioral changes.
 Yes. The skill includes a minor version upgrade workflow and a reference file
 (`references/minor-version-changes.md`) tracking changes per minor version,
 including bridge removals, deprecation promotions, and new features.
+
+### How does this skill compare to the GitHub Copilot Spring Boot 4 instructions?
+
+See [references/comparison-with-copilot-instructions.md](references/comparison-with-copilot-instructions.md)
+for a detailed FAQ-style comparison. In short: the Copilot guide is a single
+~1,500-line file focused on Gradle/Kotlin with granular code snippets for core
+breaking changes. This skill is a modular multi-file architecture covering the
+full ecosystem (Security 7, Framework 7, observability, native image, resilience),
+two migration strategies, verification tooling, and minor version tracking. Both
+cover the core breaking changes well; each has gaps the other fills.
 
 ### What are compatibility bridges?
 
