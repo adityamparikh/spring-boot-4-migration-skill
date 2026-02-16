@@ -270,3 +270,6 @@ Cross-reference with these authoritative resources:
 - Road to GA blog series: https://spring.io/blog/2025/09/02/road_to_ga_introduction
 - Dan Vega walkthrough: https://www.danvega.dev/blog/spring-boot-4-is-here
 - Dan Vega sample project: https://github.com/danvega/sb4
+- Dan Vega — Programmatic Bean Registration: https://www.danvega.dev/blog/programmatic-bean-registration (video: https://youtu.be/yh760wTFL_4)
+- Baeldung — BeanRegistrar Registration: https://www.baeldung.com/spring-beanregistrar-registration
+- itnext.io — Programmatic Bean Registration with BeanRegistrar: https://itnext.io/programmatic-bean-registration-with-beanregistrar-7c5d7f0896e3

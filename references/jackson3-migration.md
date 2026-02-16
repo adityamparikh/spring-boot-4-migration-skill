@@ -216,17 +216,17 @@ public class MySerializer extends ObjectValueSerializer<MyType> {
 // Jackson 2 (Spring Boot 3.x)
 @Bean
 public Jackson2ObjectMapperBuilderCustomizer customizer() {
-    return builder -> builder.featuresToDisable(
-        SerializationFeature.WRITE_DATES_AS_TIMESTAMPS
-    );
+    return builder -> builder
+        .featuresToEnable(SerializationFeature.INDENT_OUTPUT)
+        .featuresToDisable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
 }
 
 // Jackson 3 (Spring Boot 4.0)
 @Bean
 public JsonMapperBuilderCustomizer customizer() {
-    return builder -> builder.disable(
-        SerializationFeature.WRITE_DATES_AS_TIMESTAMPS
-    );
+    return builder -> builder
+        .enable(SerializationFeature.INDENT_OUTPUT)
+        .disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
 }
 ```
 

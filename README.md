@@ -74,6 +74,9 @@ This skill is cross-referenced against:
 - [Road to GA Blog Series](https://spring.io/blog/2025/09/02/road_to_ga_introduction)
 - [Dan Vega — Spring Boot 4 Is Here](https://www.danvega.dev/blog/spring-boot-4-is-here)
 - [Dan Vega — sb4 Sample Project](https://github.com/danvega/sb4)
+- [Dan Vega — Programmatic Bean Registration](https://www.danvega.dev/blog/programmatic-bean-registration) ([video](https://youtu.be/yh760wTFL_4))
+- [Baeldung — BeanRegistrar Registration](https://www.baeldung.com/spring-beanregistrar-registration)
+- [itnext.io — Programmatic Bean Registration with BeanRegistrar](https://itnext.io/programmatic-bean-registration-with-beanregistrar-7c5d7f0896e3)
 
 ## License
 
