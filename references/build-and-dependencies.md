@@ -17,9 +17,14 @@
 
 - Java 17+ (Java 21+ recommended, Java 25 supported)
 - Kotlin 2.2+ (if using Kotlin)
+- Maven 3.6.3+ (3.9.x+ recommended)
+- Gradle 8.14+ or 9.x
 - GraalVM 25+ (if using native-image)
 - Jakarta EE 11 / Servlet 6.1
 - Spring Framework 7.x (managed by Boot BOM)
+
+**If any tool version is below the minimum, upgrade it before starting the
+migration.** See the "Toolchain Version Check" section in the main SKILL.md.
 
 ## Gradle Version Support
 
