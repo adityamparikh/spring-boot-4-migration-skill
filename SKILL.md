@@ -13,6 +13,7 @@ description: >
   "upgrade to 4.1", "Spring Boot 4.1", "update Boot minor version",
   or any request involving moving a Spring Boot 3.x project to 4.x
   or upgrading between 4.x minor versions.
+allowed-tools: Bash(*), Glob(*), Grep(*), Read(*), WebFetch(*), WebSearch(*), mcp__claude_ai_Context7__*, mcp__plugin_context7_context7__*
 ---
 
 # Spring Boot 4 Migration Skill
@@ -30,6 +31,24 @@ This skill covers two scenarios:
    `references/minor-version-changes.md`. Minor versions may deprecate
    APIs, remove compatibility bridges, change defaults, and introduce new
    features. Check that file before bumping to any new 4.x minor version.
+
+## Verify Library and Framework Usage
+
+The model's training data has a knowledge cutoff. During migration, **actively verify** that APIs, configurations, and patterns are current for the target Spring Boot version:
+
+1. **Identify versions** — Check `pom.xml` or `build.gradle.kts` to determine the exact versions of Spring Boot, Spring Framework, and all key dependencies (both source and target).
+2. **Look up current documentation** — Use Context7 (`mcp__claude_ai_Context7__resolve-library-id` then `mcp__claude_ai_Context7__query-docs`) to retrieve up-to-date documentation for any library or framework where:
+   - The version is newer than what the model may have been trained on
+   - You are unsure whether an API, configuration property, or pattern is still valid or has been deprecated/replaced
+   - The migration involves advanced or less common features of a library
+3. **Search the web** — Use `WebSearch` and `WebFetch` to check for:
+   - Breaking changes or migration guides for the specific version in use
+   - Known security vulnerabilities (CVEs) in the dependency versions
+   - Deprecated APIs that have been replaced in newer versions
+   - Community-reported migration issues and workarounds
+4. **Check GitHub** — Use `gh` CLI to check release notes, changelogs, or issues for dependencies when needed (e.g., `gh api repos/spring-projects/spring-boot/releases/latest`)
+
+**Do not assume** that an API or pattern is correct based solely on model knowledge. When in doubt, look it up. This is especially critical during major version migrations where many APIs change.
 
 ## Toolchain Version Check (Do This First)
 
@@ -306,6 +325,3 @@ Cross-reference with these authoritative resources:
 - Road to GA blog series: https://spring.io/blog/2025/09/02/road_to_ga_introduction
 - Dan Vega walkthrough: https://www.danvega.dev/blog/spring-boot-4-is-here
 - Dan Vega sample project: https://github.com/danvega/sb4
-- Dan Vega — Programmatic Bean Registration: https://www.danvega.dev/blog/programmatic-bean-registration (video: https://youtu.be/yh760wTFL_4)
-- Baeldung — BeanRegistrar Registration: https://www.baeldung.com/spring-beanregistrar-registration
-- itnext.io — Programmatic Bean Registration with BeanRegistrar: https://itnext.io/programmatic-bean-registration-with-beanregistrar-7c5d7f0896e3
