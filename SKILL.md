@@ -1,36 +1,60 @@
 ---
 name: spring-boot-4-migration
 description: >
-  Migrate Spring Boot 3.x → 4.x and stay current across 4.x minor
-  versions. Covers build/starter changes, Jackson 3, Spring Security 7,
-  Spring Framework 7, observability (OpenTelemetry/Micrometer), property
-  and package relocations, testing (JUnit 6, Testcontainers 2, MockitoBean),
-  HTTP clients, resilience, AOT/native, and API versioning. Supports
-  all-at-once and gradual upgrade strategies with compatibility bridges.
-  Java and Kotlin; Maven and Gradle.
+  Migrate Spring Boot 2.7.x → 3.5.x → 4.x and stay current across 4.x
+  minor versions. Covers Java baseline upgrades, Jakarta EE namespace
+  migration (javax → jakarta), Hibernate 5 → 6, Spring Security 5 → 6 → 7,
+  build/starter changes, Jackson 3, Spring Framework 7, observability
+  (Micrometer Tracing, OpenTelemetry), property and package relocations,
+  testing (JUnit 6, Testcontainers 2, MockitoBean), HTTP clients,
+  resilience, AOT/native, API versioning, and OpenRewrite recipe
+  automation for every leg. Supports all-at-once and gradual upgrade
+  strategies with compatibility bridges. Java and Kotlin; Maven and
+  Gradle.
   Trigger on: "upgrade to Spring Boot 4", "migrate to Boot 4",
   "Spring Boot 4 migration", "upgrade spring boot", "gradual upgrade",
   "upgrade to 4.1", "Spring Boot 4.1", "update Boot minor version",
-  or any request involving moving a Spring Boot 3.x project to 4.x
-  or upgrading between 4.x minor versions.
-allowed-tools: Bash(*), Glob(*), Grep(*), Read(*), WebFetch(*), WebSearch(*), mcp__claude_ai_Context7__*, mcp__plugin_context7_context7__*
+  "upgrade to Spring Boot 3", "migrate to Spring Boot 3",
+  "Spring Boot 2 to 3 migration", "Spring Boot 2.7 to 3.5",
+  "javax to jakarta", "Jakarta EE migration",
+  "upgrade Java to 17 for Spring Boot", "OpenRewrite Spring Boot",
+  or any request involving moving a Spring Boot 2.x or 3.x project
+  forward, or upgrading between 4.x minor versions.
+allowed-tools:
+  - Bash
+  - Glob
+  - Grep
+  - Read
+  - WebFetch
+  - WebSearch
+  - mcp__claude_ai_Context7__*
+  - mcp__plugin_context7_context7__*
 ---
 
 # Spring Boot 4 Migration Skill
 
-Migrate Spring Boot 3.x applications to 4.x and stay current across
-minor versions with zero guesswork.
+Migrate Spring Boot 2.7.x applications to 3.5.x, then 3.5.x to 4.x, and stay current across minor versions — with zero guesswork.
 
-## Scope: 3.x → 4.0 and 4.x Minor Versions
+## Scope: 2.7.x → 3.5.x → 4.x and 4.x Minor Versions
 
-This skill covers two scenarios:
+This skill covers three scenarios:
 
-1. **Major migration (3.x → 4.0)**: The bulk of this skill — all 9 phases,
-   the gradual upgrade strategy, and the bridge system.
-2. **Minor version upgrades (4.0 → 4.1, 4.1 → 4.2, etc.)**: Tracked in
+1. **Legacy migration (2.7.x → 3.5.x)** — the prelude. Covered in
+   `references/spring-boot-2-to-3-migration.md`: Java 8/11 → 17 baseline,
+   Jakarta EE namespace migration (`javax.*` → `jakarta.*`), Spring
+   Security 5 → 6, Hibernate 5 → 6, observability migration to Micrometer
+   Tracing/Observation, OpenRewrite recipe automation for every step.
+   Reach Boot 3.5 latest patch here, then chain into the next scenario.
+2. **Major migration (3.5.x → 4.0)** — the bulk of this skill. All 9 phases,
+   the gradual upgrade strategy, and the bridge system below.
+3. **Minor version upgrades (4.0 → 4.1, 4.1 → 4.2, etc.)** — tracked in
    `references/minor-version-changes.md`. Minor versions may deprecate
    APIs, remove compatibility bridges, change defaults, and introduce new
    features. Check that file before bumping to any new 4.x minor version.
+
+If your project is on Boot 2.7.x or earlier, **start with §
+"Coming from Spring Boot 2.7?" below**, complete the 2 → 3 leg, then
+return here for the 3 → 4 phases.
 
 ## Verify Library and Framework Usage
 
@@ -85,6 +109,46 @@ upgrade them BEFORE proceeding with the Spring Boot migration.
 **Action**: Run the version checks above. Resolve any version gaps, then
 confirm the project still compiles and tests pass before continuing.
 
+**Note for projects on Boot 2.7.x or earlier (Java 8/11 baseline)**:
+the table above is the destination for Boot 4. The 2 → 3 leg has its
+own intermediate minimum (Java 17, Maven 3.6.3, Gradle 8.5). See the
+section below.
+
+## Coming from Spring Boot 2.7? Start here.
+
+If your project is on Spring Boot 2.7.x (or earlier), do the 2.7 → 3.5
+leg FIRST. The two scenarios chain:
+
+```
+Boot 2.7.x  →  Boot 3.5.x latest  →  Boot 4.x
+              (this section's prelude)   (the 9 phases below)
+```
+
+Read `references/spring-boot-2-to-3-migration.md` for the complete
+2.7 → 3.5 walkthrough. It covers:
+
+- **Toolchain bump**: Java 8/11 → 17 (re-run the 2.7 build on Java 17
+  BEFORE bumping Boot, so JDK incompats surface separately from Spring
+  upgrade churn)
+- **Pre-flight on 2.7.18 latest patch**: clear all deprecation warnings
+  and add `spring-boot-properties-migrator` for runtime diagnostics
+- **OpenRewrite automation**: one-shot via
+  `org.openrewrite.java.spring.boot3.UpgradeSpringBoot_3_5` (composes
+  every 3.0 → 3.5 step, including Jakarta migration), or step-by-step
+  per minor for large codebases
+- **Jakarta EE namespace migration** (`javax.*` → `jakarta.*`)
+- **Spring Security 5 → 6** (`WebSecurityConfigurerAdapter` removed,
+  lambda DSL required, `requestMatchers` over `antMatchers`)
+- **Hibernate 5 → 6** (`org.hibernate.orm` group ID, ID generator
+  changes, naming strategy, query handling)
+- **Per-minor highlights**: 3.0, 3.1, 3.2, 3.3, 3.4, 3.5
+- **Property migration** via Properties Migrator + OpenRewrite
+- **Observability migration** to Micrometer Tracing / Observation API
+
+When the 2 → 3 leg is verified (build passes on Boot 3.5 latest patch
+and Properties Migrator prints no warnings), **return to the
+Prerequisites section below** and proceed with Phases 1–9 for 3.5 → 4.0.
+
 ## Prerequisites
 
 ### For 3.x → 4.0 migration:
@@ -120,18 +184,44 @@ projects, small codebases, or single-team ownership.
 ## Automated Migration with OpenRewrite
 
 Before doing manual migration, consider using OpenRewrite recipes to
-automate the mechanical changes. The Moderne platform and OpenRewrite
-project provide recipes for:
+automate the mechanical changes. Run OpenRewrite FIRST to handle bulk
+find-replace operations, then use this skill's phases to address the
+remaining manual changes (Security DSL rewrites, behavioral differences,
+property semantics, etc.).
 
-- Jackson 2 → 3 package/import migration: `org.openrewrite.java.jackson.UpgradeJackson_2_3`
-- Spring Boot 4.x upgrade: `org.openrewrite.java.spring.boot3.UpgradeSpringBoot_3_5` (prepare step), then `UpgradeSpringBoot_4_0`
-- `@MockBean` → `@MockitoBean` annotation replacement
+**For the 2.7 → 3.5 leg** (run before any 3 → 4 work):
 
-Run OpenRewrite FIRST to handle bulk find-replace operations, then use
-this skill's phases to address the remaining manual changes (Security DSL
-rewrites, behavioral differences, property semantics, etc.).
+| Recipe ID | Coverage |
+|---|---|
+| `org.openrewrite.java.spring.boot3.UpgradeSpringBoot_3_5` | One-shot 2.x → 3.5: composes 3.0 → 3.1 → 3.2 → 3.3 → 3.4 → 3.5, including Jakarta migration, Spring Security 6, Hibernate 6 coordinates, property renames |
+| `org.openrewrite.java.spring.boot3.UpgradeSpringBoot_3_0` | Step-by-step: 2.7 → 3.0 only (Jakarta + Boot 3.0 baseline) |
+| `org.openrewrite.java.spring.boot3.UpgradeSpringBoot_3_1` … `_3_5` | Per-minor incremental upgrades |
+| `org.openrewrite.java.spring.boot3.SpringBootProperties_3_X` | Property key renames per minor version |
+| `org.openrewrite.java.migrate.jakarta.JakartaEE10` | Standalone Jakarta EE namespace migration (`javax.*` → `jakarta.*`) when applied outside the Boot upgrade |
 
-See: https://www.moderne.ai/blog/spring-boot-4x-migration-guide
+Catalog: [docs.openrewrite.org/recipes/java/spring/boot3](https://docs.openrewrite.org/recipes/java/spring/boot3). End-to-end 2 → 3 walkthrough: [docs.openrewrite.org/running-recipes/popular-recipe-guides/migrate-to-spring-3](https://docs.openrewrite.org/running-recipes/popular-recipe-guides/migrate-to-spring-3).
+
+**For the 3.5 → 4.0 leg**:
+
+| Recipe ID | Coverage |
+|---|---|
+| `org.openrewrite.java.spring.boot4.UpgradeSpringBoot_4_0` (Community Edition variant available) | Boot 3.5 → 4.0 |
+| `org.openrewrite.java.jackson.UpgradeJackson_2_3` | Jackson 2 → 3 package/import migration |
+| `org.openrewrite.java.spring.boot3.MigrateMockBeanToMockitoBean` (or the equivalent in `rewrite-spring`) | `@MockBean`/`@SpyBean` → `@MockitoBean`/`@MockitoSpyBean` |
+
+See: [moderne.ai/blog/spring-boot-4x-migration-guide](https://www.moderne.ai/blog/spring-boot-4x-migration-guide). For the 4.0 recipe specifically: [docs.openrewrite.org/recipes/java/spring/boot4/upgradespringboot_4_0-community-edition](https://docs.openrewrite.org/recipes/java/spring/boot4/upgradespringboot_4_0-community-edition).
+
+**Invocation**:
+
+```bash
+# Maven
+./mvnw org.openrewrite.maven:rewrite-maven-plugin:run \
+  -Drewrite.recipeArtifactCoordinates=org.openrewrite.recipe:rewrite-spring:RELEASE \
+  -Drewrite.activeRecipes=<recipe-id>
+
+# Gradle
+./gradlew rewriteRun -Drewrite.activeRecipes=<recipe-id>
+```
 
 ## Migration Workflow (All-at-Once)
 
@@ -296,7 +386,8 @@ them. Check the "New and Noteworthy" section of each release's notes.
 
 | File | When to read |
 |------|-------------|
-| `references/gradual-upgrade-strategy.md` | FIRST — migration dependency graph, bridges, independent tracks, enterprise rollout |
+| `references/spring-boot-2-to-3-migration.md` | Boot 2.7.x → 3.5.x prelude — Java baseline, Jakarta migration, Hibernate 5 → 6, Security 5 → 6, OpenRewrite recipes, per-minor highlights |
+| `references/gradual-upgrade-strategy.md` | FIRST (for 3 → 4) — migration dependency graph, bridges, independent tracks, enterprise rollout |
 | `references/build-and-dependencies.md` | Phase 1 / Track A — full starter mapping tables, build plugin changes |
 | `references/property-changes.md` | Phase 2 / Track C — all property key renames and value changes |
 | `references/jackson3-migration.md` | Phase 3 / Track B — Jackson 3 packages, APIs, compatibility mode |
@@ -316,12 +407,23 @@ them. Check the "New and Noteworthy" section of each release's notes.
 
 Cross-reference with these authoritative resources:
 
+**Boot 4.0 sources**:
 - GA Announcement: https://spring.io/blog/2025/11/20/spring-boot-4-0-0-available-now
 - Migration Guide: https://github.com/spring-projects/spring-boot/wiki/Spring-Boot-4.0-Migration-Guide
 - Release Notes: https://github.com/spring-projects/spring-boot/wiki/Spring-Boot-4.0-Release-Notes
 - Upgrading Docs: https://docs.spring.io/spring-boot/upgrading.html
 - Jackson 3 in Spring: https://spring.io/blog/2025/10/07/introducing-jackson-3-support-in-spring/
-- OpenRewrite Recipes: https://www.moderne.ai/blog/spring-boot-4x-migration-guide
+- OpenRewrite recipe (Boot 4.0 community edition): https://docs.openrewrite.org/recipes/java/spring/boot4/upgradespringboot_4_0-community-edition
+- Moderne 4.x walkthrough: https://www.moderne.ai/blog/spring-boot-4x-migration-guide
 - Road to GA blog series: https://spring.io/blog/2025/09/02/road_to_ga_introduction
 - Dan Vega walkthrough: https://www.danvega.dev/blog/spring-boot-4-is-here
 - Dan Vega sample project: https://github.com/danvega/sb4
+
+**Boot 2.7 → 3.5 sources** (used by `references/spring-boot-2-to-3-migration.md`):
+- Spring Boot 3.0 Migration Guide: https://github.com/spring-projects/spring-boot/wiki/Spring-Boot-3.0-Migration-Guide
+- Spring Boot release notes index: https://github.com/spring-projects/spring-boot/wiki
+- OpenRewrite Spring 2 → 3 walkthrough: https://docs.openrewrite.org/running-recipes/popular-recipe-guides/migrate-to-spring-3
+- OpenRewrite Boot 3.x recipe catalog: https://docs.openrewrite.org/recipes/java/spring/boot3
+- Spring Security migration index: https://docs.spring.io/spring-security/reference/migration/index.html
+- Hibernate ORM 6.0 migration guide: https://github.com/hibernate/hibernate-orm/blob/6.0/migration-guide.adoc
+- Spring Boot Properties Migrator usage: https://docs.spring.io/spring-boot/upgrading.html
