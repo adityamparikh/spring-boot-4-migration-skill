@@ -4,7 +4,7 @@ A comprehensive [Claude Code skill](https://code.claude.com/docs/en/skills) for 
 
 ## What This Skill Does
 
-When installed, this skill gives Claude Code deep knowledge of every breaking change in Spring Boot 4.x and guides you through migration step-by-step. It supports:
+When installed, this skill gives Claude Code targeted guidance on the breaking changes documented in the official Spring Boot 4 migration guide and release notes, and walks you through migration step-by-step. It supports:
 
 - **Toolchain version check**: Detects unsupported Java, Kotlin, Maven, and Gradle versions and guides upgrades before migration begins
 - **Two migration strategies**: All-at-once (9 sequential phases) or gradual upgrade (Day-1 baseline with 6 independent tracks)
@@ -16,15 +16,13 @@ When installed, this skill gives Claude Code deep knowledge of every breaking ch
 
 ## Installation
 
-### Claude Code CLI
+Clone the skill into your Claude Code skills directory:
 
 ```bash
-claude install-skill github:adityamparikh/spring-boot-4-migration-skill
+git clone https://github.com/adityamparikh/spring-boot-4-migration-skill.git ~/.claude/skills/spring-boot-4-migration
 ```
 
-### Manual Installation
-
-Copy the contents of this repository to `~/.claude/skills/spring-boot-4-migration/`.
+Claude Code will pick up the skill on the next session.
 
 ## Usage
 
@@ -58,7 +56,6 @@ references/
   resilience-migration.md             # Spring Retry → Framework 7, @Retryable, @ConcurrencyLimit
   aot-native.md                       # AOT processing, BeanRegistrar, RuntimeHints, GraalVM 25
   minor-version-changes.md            # 4.x minor version changes, bridge removals, upgrade checklists
-  comparison-with-copilot-instructions.md  # FAQ comparing this skill with the awesome-copilot-instructions guide
 scripts/
   verify_migration.sh                 # Bridge-aware verification (PASS/FAIL/WARN/BRIDGE)
 ```
@@ -76,9 +73,6 @@ This skill is cross-referenced against:
 - [Road to GA Blog Series](https://spring.io/blog/2025/09/02/road_to_ga_introduction)
 - [Dan Vega — Spring Boot 4 Is Here](https://www.danvega.dev/blog/spring-boot-4-is-here)
 - [Dan Vega — sb4 Sample Project](https://github.com/danvega/sb4)
-- [Dan Vega — Programmatic Bean Registration](https://www.danvega.dev/blog/programmatic-bean-registration) ([video](https://youtu.be/yh760wTFL_4))
-- [Baeldung — BeanRegistrar Registration](https://www.baeldung.com/spring-beanregistrar-registration)
-- [itnext.io — Programmatic Bean Registration with BeanRegistrar](https://itnext.io/programmatic-bean-registration-with-beanregistrar-7c5d7f0896e3)
 
 ## FAQ
 
@@ -127,16 +121,6 @@ work like Security DSL rewrites and behavioral changes.
 Yes. The skill includes a minor version upgrade workflow and a reference file
 (`references/minor-version-changes.md`) tracking changes per minor version,
 including bridge removals, deprecation promotions, and new features.
-
-### How does this skill compare to the GitHub Copilot Spring Boot 4 instructions?
-
-See [references/comparison-with-copilot-instructions.md](references/comparison-with-copilot-instructions.md)
-for a detailed FAQ-style comparison. In short: the Copilot guide is a single
-~1,500-line file focused on Gradle/Kotlin with granular code snippets for core
-breaking changes. This skill is a modular multi-file architecture covering the
-full ecosystem (Security 7, Framework 7, observability, native image, resilience),
-two migration strategies, verification tooling, and minor version tracking. Both
-cover the core breaking changes well; each has gaps the other fills.
 
 ### What are compatibility bridges?
 

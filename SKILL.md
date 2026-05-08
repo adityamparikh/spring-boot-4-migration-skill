@@ -19,7 +19,8 @@ allowed-tools: Bash(*), Glob(*), Grep(*), Read(*), WebFetch(*), WebSearch(*), mc
 # Spring Boot 4 Migration Skill
 
 Migrate Spring Boot 3.x applications to 4.x and stay current across
-minor versions with zero guesswork.
+4.x minor versions, anchored to the official Spring Boot 4 migration
+guide and release notes.
 
 ## Scope: 3.x → 4.0 and 4.x Minor Versions
 
