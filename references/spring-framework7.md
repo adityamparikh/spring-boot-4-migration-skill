@@ -44,6 +44,8 @@ Spring Framework 7 migrates from `org.springframework.lang` annotations
 to JSpecify 1.0. See also `references/api-changes.md` for the
 annotation mapping.
 
+> For a complete guide to adopting JSpecify (OpenRewrite migration recipes, NullAway + Error Prone enforcement, incremental adoption, and Kotlin interop), see the dedicated **jspecify skill** at `~/.claude/skills/jspecify`.
+
 | Deprecated Spring Annotation | JSpecify Replacement | Scope |
 |------------------------------|---------------------|-------|
 | `@org.springframework.lang.Nullable` | `@org.jspecify.annotations.Nullable` | Type usage |
@@ -126,11 +128,11 @@ If using NullAway or SpotBugs, JSpecify provides more precise contracts:
 Gradle:
 ```gradle
 plugins {
-    id 'net.ltgt.errorprone' version '4.1.0'
+    id 'net.ltgt.errorprone' version '5.1.0'
 }
 dependencies {
-    errorprone 'com.google.errorprone:error_prone_core:2.37.0'
-    errorprone 'com.uber.nullaway:nullaway:0.12.6'
+    errorprone 'com.google.errorprone:error_prone_core:2.48.0'
+    errorprone 'com.uber.nullaway:nullaway:0.13.1'
 }
 tasks.withType(JavaCompile).configureEach {
     options.errorprone {
@@ -381,20 +383,8 @@ a configuration class instead.
 
 ## Programmatic Bean Registration
 
-Spring Framework 7 introduces the `BeanRegistrar` interface — a clean,
-AOT-friendly way to register beans programmatically. It replaces the
-verbose `ImportBeanDefinitionRegistrar` / `BeanDefinitionRegistryPostProcessor`
-approaches with a modern API that uses lambda expressions and method chaining.
-
-### Basic Usage
-
-Implement `BeanRegistrar` and wire it via `@Import`:
-
+New `BeanRegistrar` interface for programmatic bean registration:
 ```java
-@Configuration
-@Import(MyBeanRegistrar.class)
-public class AppConfig { }
-
 public class MyBeanRegistrar implements BeanRegistrar {
     @Override
     public void register(BeanRegistry registry, Environment environment) {
@@ -402,100 +392,6 @@ public class MyBeanRegistrar implements BeanRegistrar {
     }
 }
 ```
-
-### Environment-Driven Conditional Registration
-
-The `Environment` parameter enables registering different beans based on
-profiles, properties, or other runtime conditions:
-
-```java
-public class MessageServiceRegistrar implements BeanRegistrar {
-    @Override
-    public void register(BeanRegistry registry, Environment env) {
-        String type = env.getProperty("app.message-type", "email");
-
-        switch (type.toLowerCase()) {
-            case "email" -> registry.registerBean("messageService",
-                EmailMessageService.class,
-                spec -> spec.description("Email service via BeanRegistrar"));
-            case "sms" -> registry.registerBean("messageService",
-                SmsMessageService.class,
-                spec -> spec.description("SMS service via BeanRegistrar"));
-        }
-    }
-}
-```
-
-### BeanSpec Customization
-
-Use the `spec` lambda to configure scope, laziness, dependencies, and
-supplier logic:
-
-```java
-registry.registerBean("bar", Bar.class, spec -> spec
-    .prototype()
-    .lazyInit()
-    .supplier(context -> new Bar(context.bean(Foo.class)))
-);
-```
-
-### Kotlin DSL
-
-```kotlin
-class MyKotlinRegistrar : BeanRegistrar {
-    override fun register(registry: BeanRegistry, env: Environment) {
-        registry.registerBean("userService") {
-            UserService(env.getProperty("api.url"))
-        }
-    }
-}
-```
-
-### Migration from Older Approaches
-
-| Approach | Complexity | Flexibility | AOT-Compatible |
-|----------|------------|-------------|----------------|
-| `@Component` / `@Bean` | Low | Low | Yes |
-| `BeanDefinitionRegistryPostProcessor` | High | High | Partial |
-| `ImportBeanDefinitionRegistrar` | High | High | Partial |
-| **`BeanRegistrar`** (Framework 7) | **Low** | **High** | **Yes** |
-
-If you have existing `ImportBeanDefinitionRegistrar` implementations,
-migrate them to `BeanRegistrar`:
-
-```java
-// Before (Framework 6 / Boot 3.x)
-public class OldRegistrar implements ImportBeanDefinitionRegistrar {
-    @Override
-    public void registerBeanDefinitions(
-            AnnotationMetadata metadata,
-            BeanDefinitionRegistry registry) {
-        GenericBeanDefinition def = new GenericBeanDefinition();
-        def.setBeanClass(MyBean.class);
-        def.setScope("prototype");
-        registry.registerBeanDefinition("myBean", def);
-    }
-}
-
-// After (Framework 7 / Boot 4.x)
-public class NewRegistrar implements BeanRegistrar {
-    @Override
-    public void register(BeanRegistry registry, Environment env) {
-        registry.registerBean("myBean", MyBean.class, spec -> spec.prototype());
-    }
-}
-```
-
-### Community Resources
-
-- [Official Spring Docs — Programmatic Bean Registration](https://docs.spring.io/spring-framework/reference/core/beans/java/programmatic-bean-registration.html)
-- [Baeldung — BeanRegistrar Registration](https://www.baeldung.com/spring-beanregistrar-registration)
-- [Dan Vega — Programmatic Bean Registration](https://www.danvega.dev/blog/programmatic-bean-registration) ([video](https://youtu.be/yh760wTFL_4))
-- [Dan Vega — sb4 bean-registration example](https://github.com/danvega/sb4/tree/master/features/bean-registration)
-- [itnext.io — Programmatic Bean Registration with BeanRegistrar](https://itnext.io/programmatic-bean-registration-with-beanregistrar-7c5d7f0896e3)
-
-See also `references/aot-native.md` for BeanRegistrar's role in
-AOT processing and native image compatibility.
 
 ## JMS Client API (New)
 

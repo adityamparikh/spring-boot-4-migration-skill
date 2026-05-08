@@ -33,7 +33,9 @@ allowed-tools:
 
 # Spring Boot 4 Migration Skill
 
-Migrate Spring Boot 2.7.x applications to 3.5.x, then 3.5.x to 4.x, and stay current across minor versions — with zero guesswork.
+Migrate Spring Boot 2.7.x applications to 3.5.x, then 3.5.x to 4.x,
+and stay current across 4.x minor versions, anchored to the official
+Spring Boot migration guides and release notes for each leg.
 
 ## Scope: 2.7.x → 3.5.x → 4.x and 4.x Minor Versions
 

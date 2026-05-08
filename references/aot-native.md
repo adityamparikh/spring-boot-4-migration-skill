@@ -78,25 +78,7 @@ plugins {
 ## BeanRegistrar (New)
 
 AOT-compatible programmatic bean registration replacing
-`ImportBeanDefinitionRegistrar` for native-friendly code. Unlike its
-predecessors, `BeanRegistrar` avoids reflection-heavy `BeanDefinition`
-manipulation, making it fully compatible with GraalVM closed-world
-analysis and Spring AOT processing.
-
-> **Full coverage**: For general usage, environment-driven conditional
-> registration, migration from older approaches, and community resources,
-> see the **Programmatic Bean Registration** section in
-> `references/spring-framework7.md`. This section focuses on the
-> **AOT/native** angle.
-
-### Why BeanRegistrar Matters for Native
-
-- **No reflection at registration time** — uses lambda suppliers instead
-  of class-based `BeanDefinition` instantiation
-- **AOT code generation** — registrations translate directly to generated
-  Java code during `processAhead`
-- **Smaller native images** — avoids pulling in `BeanDefinitionRegistry`
-  infrastructure at build time
+`ImportBeanDefinitionRegistrar` for native-friendly code:
 
 ```java
 @Configuration
