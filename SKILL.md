@@ -1,25 +1,20 @@
 ---
 name: spring-boot-4-migration
 description: >
-  Migrate Spring Boot 2.7.x → 3.5.x → 4.x and stay current across 4.x
-  minor versions. Covers Java baseline upgrades, Jakarta EE namespace
-  migration (javax → jakarta), Hibernate 5 → 6, Spring Security 5 → 6 → 7,
-  build/starter changes, Jackson 3, Spring Framework 7, observability
+  Guides Spring Boot version migrations: 2.7.x to 3.5.x, 3.5.x to 4.x, and
+  minor upgrades within 4.x. Covers Java/Kotlin baseline upgrades, Jakarta
+  EE namespace (javax to jakarta), Hibernate 5/6/7, Spring Security 5/6/7,
+  modular starters, Jackson 3, Spring Framework 7, observability
   (Micrometer Tracing, OpenTelemetry), property and package relocations,
-  testing (JUnit 6, Testcontainers 2, MockitoBean), HTTP clients,
-  resilience, AOT/native, API versioning, and OpenRewrite recipe
-  automation for every leg. Supports all-at-once and gradual upgrade
-  strategies with compatibility bridges. Java and Kotlin; Maven and
-  Gradle.
-  Trigger on: "upgrade to Spring Boot 4", "migrate to Boot 4",
-  "Spring Boot 4 migration", "upgrade spring boot", "gradual upgrade",
-  "upgrade to 4.1", "Spring Boot 4.1", "update Boot minor version",
-  "upgrade to Spring Boot 3", "migrate to Spring Boot 3",
-  "Spring Boot 2 to 3 migration", "Spring Boot 2.7 to 3.5",
-  "javax to jakarta", "Jakarta EE migration",
-  "upgrade Java to 17 for Spring Boot", "OpenRewrite Spring Boot",
-  or any request involving moving a Spring Boot 2.x or 3.x project
-  forward, or upgrading between 4.x minor versions.
+  JUnit 6, Testcontainers 2, MockitoBean, HTTP clients, resilience,
+  AOT/native, API versioning, and OpenRewrite recipe automation. Supports
+  all-at-once and gradual strategies with compatibility bridges. Java and
+  Kotlin; Maven and Gradle. Trigger on requests like "upgrade/migrate to
+  Spring Boot 3 or 4", "Spring Boot 2 to 3", "javax to jakarta", "upgrade
+  to 4.1", "OpenRewrite Spring Boot", or any request moving a Spring Boot
+  project to a newer major or minor version. Do NOT use for general Spring
+  Boot development on a fixed version (new endpoints, services, JPA,
+  tests) — use the spring-boot skill for that.
 allowed-tools:
   - Bash
   - Glob
@@ -58,63 +53,27 @@ If your project is on Boot 2.7.x or earlier, **start with §
 "Coming from Spring Boot 2.7?" below**, complete the 2 → 3 leg, then
 return here for the 3 → 4 phases.
 
-## Verify Library and Framework Usage
+## Verify APIs Against Current Documentation
 
-The model's training data has a knowledge cutoff. During migration, **actively verify** that APIs, configurations, and patterns are current for the target Spring Boot version:
+Many APIs change across these migrations. When unsure whether an API,
+property, or pattern is still valid for the target version, look it up
+rather than relying on model knowledge:
 
-1. **Identify versions** — Check `pom.xml` or `build.gradle.kts` to determine the exact versions of Spring Boot, Spring Framework, and all key dependencies (both source and target).
-2. **Look up current documentation** — Use Context7 (`mcp__claude_ai_Context7__resolve-library-id` then `mcp__claude_ai_Context7__query-docs`) to retrieve up-to-date documentation for any library or framework where:
-   - The version is newer than what the model may have been trained on
-   - You are unsure whether an API, configuration property, or pattern is still valid or has been deprecated/replaced
-   - The migration involves advanced or less common features of a library
-3. **Search the web** — Use `WebSearch` and `WebFetch` to check for:
-   - Breaking changes or migration guides for the specific version in use
-   - Known security vulnerabilities (CVEs) in the dependency versions
-   - Deprecated APIs that have been replaced in newer versions
-   - Community-reported migration issues and workarounds
-4. **Check GitHub** — Use `gh` CLI to check release notes, changelogs, or issues for dependencies when needed (e.g., `gh api repos/spring-projects/spring-boot/releases/latest`)
-
-**Do not assume** that an API or pattern is correct based solely on model knowledge. When in doubt, look it up. This is especially critical during major version migrations where many APIs change.
+- Use Context7 (`mcp__claude_ai_Context7__resolve-library-id` then
+  `mcp__claude_ai_Context7__query-docs`) for library docs.
+- Use `WebSearch` / `WebFetch` for breaking-change announcements, CVEs,
+  and community migration reports.
+- Use `gh` for release notes (e.g.,
+  `gh api repos/spring-projects/spring-boot/releases/latest`).
 
 ## Toolchain Version Check (Do This First)
 
-Before starting any migration, detect the project's current Java, Kotlin,
-Maven, and Gradle versions. If any are below the minimum supported versions,
-upgrade them BEFORE proceeding with the Spring Boot migration.
+Before starting any migration, detect the project's Java, Kotlin, Maven,
+and Gradle versions. If any are below the minimums for the target Boot
+version, upgrade them BEFORE bumping Boot.
 
-**Minimum supported versions for Spring Boot 4.x:**
-
-| Tool | Minimum | Recommended | How to check |
-|------|---------|-------------|--------------|
-| Java | 17 | 21+ (25 supported) | `java -version` or `javac -version` |
-| Kotlin | 2.2 | 2.2.x (latest) | Check `kotlin.version` in build file or `kotlinc -version` |
-| Maven | 3.6.3 | 3.9.x+ | `mvn -version` or `./mvnw -version` |
-| Gradle | 8.14 | 9.x | `gradle -version` or `./gradlew -version` |
-
-**If older versions are detected:**
-
-- **Java < 17**: Upgrade JDK before anything else. Boot 4 will not compile.
-  Install JDK 21 (LTS, recommended) or JDK 17 (minimum). Update `JAVA_HOME`,
-  `sourceCompatibility`/`targetCompatibility` (Gradle), or
-  `<maven.compiler.source>`/`<maven.compiler.target>` (Maven).
-- **Kotlin < 2.2**: Update `kotlin.version` property in your build file to
-  2.2.x. Spring Boot 4 requires Kotlin 2.2 baseline for JSpecify null-safety
-  support. If upgrading from Kotlin 1.x, review the Kotlin 2.0 migration
-  guide first.
-- **Maven < 3.6.3**: Upgrade Maven wrapper: `mvn wrapper:wrapper -Dmaven=3.9.9`
-  or download a newer distribution. Older Maven versions may fail to resolve
-  Boot 4 dependencies or run the Boot Maven plugin.
-- **Gradle < 8.14**: Upgrade Gradle wrapper:
-  `./gradlew wrapper --gradle-version=9.0` (or `8.14` minimum). Older Gradle
-  versions are not supported by the Spring Boot 4 Gradle plugin.
-
-**Action**: Run the version checks above. Resolve any version gaps, then
-confirm the project still compiles and tests pass before continuing.
-
-**Note for projects on Boot 2.7.x or earlier (Java 8/11 baseline)**:
-the table above is the destination for Boot 4. The 2 → 3 leg has its
-own intermediate minimum (Java 17, Maven 3.6.3, Gradle 8.5). See the
-section below.
+Read `references/toolchain-versions.md` for the minimum/recommended
+versions table and per-tool upgrade commands.
 
 ## Coming from Spring Boot 2.7? Start here.
 
@@ -388,6 +347,7 @@ them. Check the "New and Noteworthy" section of each release's notes.
 
 | File | When to read |
 |------|-------------|
+| `references/toolchain-versions.md` | Toolchain check — Java/Kotlin/Maven/Gradle minimums and per-tool upgrade commands |
 | `references/spring-boot-2-to-3-migration.md` | Boot 2.7.x → 3.5.x prelude — Java baseline, Jakarta migration, Hibernate 5 → 6, Security 5 → 6, OpenRewrite recipes, per-minor highlights |
 | `references/gradual-upgrade-strategy.md` | FIRST (for 3 → 4) — migration dependency graph, bridges, independent tracks, enterprise rollout |
 | `references/build-and-dependencies.md` | Phase 1 / Track A — full starter mapping tables, build plugin changes |
@@ -405,27 +365,5 @@ them. Check the "New and Noteworthy" section of each release's notes.
 | `references/minor-version-changes.md` | 4.x minor upgrades — changes per minor version, bridge removals, new features |
 | `scripts/verify_migration.sh` | Phase 9 — bridge-aware verification with PASS/FAIL/WARN/BRIDGE |
 
-## Official Sources
-
-Cross-reference with these authoritative resources:
-
-**Boot 4.0 sources**:
-- GA Announcement: https://spring.io/blog/2025/11/20/spring-boot-4-0-0-available-now
-- Migration Guide: https://github.com/spring-projects/spring-boot/wiki/Spring-Boot-4.0-Migration-Guide
-- Release Notes: https://github.com/spring-projects/spring-boot/wiki/Spring-Boot-4.0-Release-Notes
-- Upgrading Docs: https://docs.spring.io/spring-boot/upgrading.html
-- Jackson 3 in Spring: https://spring.io/blog/2025/10/07/introducing-jackson-3-support-in-spring/
-- OpenRewrite recipe (Boot 4.0 community edition): https://docs.openrewrite.org/recipes/java/spring/boot4/upgradespringboot_4_0-community-edition
-- Moderne 4.x walkthrough: https://www.moderne.ai/blog/spring-boot-4x-migration-guide
-- Road to GA blog series: https://spring.io/blog/2025/09/02/road_to_ga_introduction
-- Dan Vega walkthrough: https://www.danvega.dev/blog/spring-boot-4-is-here
-- Dan Vega sample project: https://github.com/danvega/sb4
-
-**Boot 2.7 → 3.5 sources** (used by `references/spring-boot-2-to-3-migration.md`):
-- Spring Boot 3.0 Migration Guide: https://github.com/spring-projects/spring-boot/wiki/Spring-Boot-3.0-Migration-Guide
-- Spring Boot release notes index: https://github.com/spring-projects/spring-boot/wiki
-- OpenRewrite Spring 2 → 3 walkthrough: https://docs.openrewrite.org/running-recipes/popular-recipe-guides/migrate-to-spring-3
-- OpenRewrite Boot 3.x recipe catalog: https://docs.openrewrite.org/recipes/java/spring/boot3
-- Spring Security migration index: https://docs.spring.io/spring-security/reference/migration/index.html
-- Hibernate ORM 6.0 migration guide: https://github.com/hibernate/hibernate-orm/blob/6.0/migration-guide.adoc
-- Spring Boot Properties Migrator usage: https://docs.spring.io/spring-boot/upgrading.html
+Authoritative external sources for each leg are listed at the bottom of
+the corresponding reference file.
