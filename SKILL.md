@@ -115,7 +115,7 @@ Prerequisites section below** and proceed with Phases 1–9 for 3.5 → 4.0.
 ### For 3.x → 4.0 migration:
 - Toolchain versions meet minimums (see Toolchain Version Check above)
 - Source project compiles and tests pass on Spring Boot 3.5.x (latest patch)
-- Java 17+ is available (Java 21+ recommended, Java 25 supported)
+- Java 17+ is available (Java 25 recommended; Java 17, 21, 25 all supported)
 - All deprecated API calls from Boot 3.x are resolved where possible
 - If on Boot 3.4 or earlier, first upgrade to 3.5.x before proceeding
 

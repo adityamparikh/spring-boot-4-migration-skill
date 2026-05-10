@@ -10,12 +10,12 @@ The 2 → 3 leap is the largest non-major Spring change in years: Java baseline 
 
 | Tool | Boot 2.7 minimum | Boot 3.5 minimum | Recommended for the upgrade |
 |---|---|---|---|
-| Java | 8 | **17** | 21 (LTS) |
+| Java | 8 | **17** | 25 (LTS) — 17, 21, 25 all supported on Boot 4 |
 | Maven | 3.5 | **3.6.3** | 3.9.x |
 | Gradle | 6.8 | **8.5** (Boot 3.4+) / **8.14** (Boot 4) | 8.10+ |
 | Kotlin | 1.6 | **1.9.20** | 2.0.x while still on Boot 3 |
 
-**Java upgrade**: install JDK 17 (or 21), update `JAVA_HOME`, set `<maven.compiler.source>17</maven.compiler.source>` (Maven) or `sourceCompatibility = JavaVersion.VERSION_17` (Gradle). Re-run the build on Boot 2.7 with Java 17 BEFORE touching the Boot version — that surfaces JDK incompatibilities (removed APIs, sun.misc, etc.) one at a time instead of stacking them on top of the Boot upgrade.
+**Java upgrade**: install JDK 17 (minimum for Boot 3) or, ideally, JDK 25 (current LTS, the recommended target for Boot 4). Update `JAVA_HOME`, set `<maven.compiler.source>17</maven.compiler.source>` (Maven) or `sourceCompatibility = JavaVersion.VERSION_17` (Gradle). Re-run the build on Boot 2.7 with Java 17 BEFORE touching the Boot version — that surfaces JDK incompatibilities (removed APIs, sun.misc, etc.) one at a time instead of stacking them on top of the Boot upgrade. Once on Boot 4, raise the source/target level to 25 to take advantage of the latest LTS.
 
 **Maven/Gradle wrapper**: `./mvnw wrapper:wrapper -Dmaven=3.9.9` or `./gradlew wrapper --gradle-version=8.10`.
 
@@ -119,10 +119,10 @@ Manual cleanup spots OpenRewrite often misses:
 |---|---|---|---|
 | 3.0 | 6.0 | 17 | Jakarta migration, Spring Security 6, Micrometer Tracing/Observation, Native AOT (GraalVM 22.3), removed Trailing-Slash matching |
 | 3.1 | 6.0 | 17 | Declarative HTTP clients (`@HttpExchange` GA), Testcontainers + Docker Compose dev support, virtual threads experimental |
-| 3.2 | 6.1 | 17 (21 recommended) | Virtual threads GA (`spring.threads.virtual.enabled`), `RestClient`, `JdbcClient`, JVM Checkpoint Restore (CRaC), `@Scheduled` observation |
+| 3.2 | 6.1 | 17 (21 GA'd virtual threads) | Virtual threads GA (`spring.threads.virtual.enabled`), `RestClient`, `JdbcClient`, JVM Checkpoint Restore (CRaC), `@Scheduled` observation |
 | 3.3 | 6.1 | 17 | Class Data Sharing (CDS) support, structured logging foundations, base image refresh |
 | 3.4 | 6.2 | 17 | `RestClient` enhancements, Bean Validation method-level improvements, structured logging maturity, `@MockitoBean` / `@MockitoSpyBean` (replace `@MockBean` / `@SpyBean`) |
-| 3.5 | 6.2 | 17 (21 recommended) | Final 3.x line — the launchpad for 4.0. Property migrations consolidated; `MockMvcTester` fluent API; community OpenRewrite recipes available |
+| 3.5 | 6.2 | 17 (21 supported) | Final 3.x line — the launchpad for 4.0. Property migrations consolidated; `MockMvcTester` fluent API; community OpenRewrite recipes available |
 
 After each bump, run `./mvnw verify` (or `./gradlew build`) and address compile errors and deprecation warnings before moving to the next minor.
 

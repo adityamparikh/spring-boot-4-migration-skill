@@ -8,7 +8,7 @@ JDK/build issues surface separately from Spring upgrade churn.
 
 | Tool | Minimum | Recommended | How to check |
 |------|---------|-------------|--------------|
-| Java | 17 | 21+ (25 supported) | `java -version` or `javac -version` |
+| Java | 17 | 25 (LTS) — 17, 21, 25 all supported | `java -version` or `javac -version` |
 | Kotlin | 2.2 | 2.2.x (latest) | Check `kotlin.version` in build file or `kotlinc -version` |
 | Maven | 3.6.3 | 3.9.x+ | `mvn -version` or `./mvnw -version` |
 | Gradle | 8.14 | 9.x | `gradle -version` or `./gradlew -version` |
@@ -16,7 +16,8 @@ JDK/build issues surface separately from Spring upgrade churn.
 ## If older versions are detected
 
 - **Java < 17**: Upgrade JDK before anything else. Boot 4 will not compile.
-  Install JDK 21 (LTS, recommended) or JDK 17 (minimum). Update `JAVA_HOME`,
+  Install JDK 25 (latest LTS, recommended) or JDK 17 (minimum). Boot 4 also
+  supports JDK 21. Update `JAVA_HOME`,
   `sourceCompatibility`/`targetCompatibility` (Gradle), or
   `<maven.compiler.source>`/`<maven.compiler.target>` (Maven).
 - **Kotlin < 2.2**: Update `kotlin.version` property in your build file to

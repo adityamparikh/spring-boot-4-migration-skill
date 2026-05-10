@@ -15,7 +15,7 @@
 
 ## Version Requirements
 
-- Java 17+ (Java 21+ recommended, Java 25 supported)
+- Java 17+ (Java 25 recommended; 17, 21, and 25 all supported)
 - Kotlin 2.2+ (if using Kotlin)
 - Maven 3.6.3+ (3.9.x+ recommended)
 - Gradle 8.14+ or 9.x
