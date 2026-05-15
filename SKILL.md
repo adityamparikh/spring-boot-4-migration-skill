@@ -167,6 +167,7 @@ Catalog: [docs.openrewrite.org/recipes/java/spring/boot3](https://docs.openrewri
 | Recipe ID | Coverage |
 |---|---|
 | `org.openrewrite.java.spring.boot4.UpgradeSpringBoot_4_0` (Community Edition variant available) | Boot 3.5 → 4.0 |
+| `org.openrewrite.java.spring.kafka.UpgradeSpringKafka_4_0` | Spring Kafka 3.x → 4.0 (use alongside the Boot 4 recipe — see `references/spring-kafka-4-migration.md`) |
 | `org.openrewrite.java.jackson.UpgradeJackson_2_3` | Jackson 2 → 3 package/import migration |
 | `org.openrewrite.java.spring.boot3.MigrateMockBeanToMockitoBean` (or the equivalent in `rewrite-spring`) | `@MockBean`/`@SpyBean` → `@MockitoBean`/`@MockitoSpyBean` |
 
@@ -198,6 +199,12 @@ technology used in tests. Use classic starters as a stopgap if needed.
 Read `references/build-and-dependencies.md` for complete starter mappings,
 build plugin changes, and step-by-step instructions.
 
+If your project uses Spring for Apache Kafka, also read
+`references/spring-kafka-4-migration.md` — Spring Kafka 4 changes the
+test starter coordinates (`spring-kafka-test` →
+`spring-boot-starter-kafka-test`) and ships dedicated OpenRewrite
+recipes that should run alongside `UpgradeSpringBoot_4_0`.
+
 **Compile check**: Run `mvn compile` or `gradle compileJava` — fix any
 dependency resolution errors before continuing.
 
@@ -216,6 +223,10 @@ renamed Boot classes (`@JsonComponent` → `@JacksonComponent`, etc.).
 Use `spring-boot-jackson2` bridge as a temporary stopgap if needed.
 
 Read `references/jackson3-migration.md` for complete details.
+If your project uses Spring Kafka JSON serializers/deserializers or
+header mappers, also read the Jackson section of
+`references/spring-kafka-4-migration.md` — Kafka serializer code moves
+to the `tools.jackson.*` package tree.
 
 ### Phase 4: Package and API Relocations
 
@@ -253,6 +264,10 @@ for test HTTP clients. Migrate Testcontainers 2 module names/packages
 and adopt JUnit 6. Add modular test starters for each technology.
 
 Read `references/testing-migration.md` for complete details.
+If your project uses `@EmbeddedKafka` or `EmbeddedKafkaZKBroker`, also
+read `references/spring-kafka-4-migration.md` — Spring Kafka 4 removes
+the ZooKeeper code paths (KRaft only) and the corresponding
+`@EmbeddedKafka` attributes.
 
 ### Phase 8: Spring Framework 7 Specific Changes
 
@@ -263,6 +278,10 @@ entity mapping changes, and Spring Retry → Framework core retry migration.
 Read `references/spring-framework7.md` for complete details.
 Also read `references/resilience-migration.md` if your project uses
 Spring Retry, `@Retryable`, `@ConcurrencyLimit`, or Resilience4j.
+If your project uses Spring for Apache Kafka, also read
+`references/spring-kafka-4-migration.md` — Spring Kafka 4 drops its
+Spring Retry dependency in favour of Framework 7 core retry, and
+`BackOffValuesGenerator` now uses `BackOff` instead of `BackOffPolicy`.
 Optionally read `references/api-versioning.md` for new API versioning
 capabilities introduced in Framework 7.
 
@@ -361,6 +380,7 @@ them. Check the "New and Noteworthy" section of each release's notes.
 | `references/http-clients.md` | HTTP clients — RestClient, WebClient, @HttpExchange, Feign migration, RestTestClient |
 | `references/api-versioning.md` | API versioning — strategies, semantic ranges, client-side, deprecation, testing |
 | `references/resilience-migration.md` | Resilience — Spring Retry → Framework 7, @Retryable, @ConcurrencyLimit, Resilience4j |
+| `references/spring-kafka-4-migration.md` | Spring for Apache Kafka 4 — Apache Kafka 4 client (KRaft only), `EmbeddedKafkaZKBroker` removal, `spring-boot-starter-kafka-test`, Jackson 3 serializers, Spring Retry removal, KIP-848 / KIP-932, OpenRewrite recipes |
 | `references/aot-native.md` | AOT/Native — BeanRegistrar, RuntimeHints, Spring Data AOT, GraalVM 25, AOT Cache |
 | `references/minor-version-changes.md` | 4.x minor upgrades — changes per minor version, bridge removals, new features |
 | `scripts/verify_migration.sh` | Phase 9 — bridge-aware verification with PASS/FAIL/WARN/BRIDGE |
