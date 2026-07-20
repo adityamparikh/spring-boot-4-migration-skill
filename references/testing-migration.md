@@ -1,7 +1,13 @@
 # Testing Migration Reference
 
+Testing-specific changes for upgrading to Spring Boot 4.x. If you are on **2.7.x**, do the
+[2 → 3 testing leg](#coming-from-spring-boot-27-the-2--3-testing-leg) first, then apply the
+3.5 → 4.x sections. `references/spring-boot-2-to-3-migration.md` covers the non-testing
+parts of the 2 → 3 leg.
+
 ## Contents
 
+- [Coming from Spring Boot 2.7? The 2 → 3 testing leg](#coming-from-spring-boot-27-the-2--3-testing-leg)
 - [@MockBean / @SpyBean → @MockitoBean / @MockitoSpyBean](#mockbean--spybean--mockitobean--mockitospybean)
 - [HTTP Test Client Changes](#http-test-client-changes)
 - [Testcontainers 2.0](#testcontainers-20)
@@ -10,6 +16,38 @@
 - [Context Caching Improvement](#context-caching-improvement)
 - [@PropertyMapping Relocation](#propertymapping-relocation)
 - [Checklist](#checklist)
+
+## Coming from Spring Boot 2.7? The 2 → 3 testing leg
+
+Reach **Boot 3.5.x latest** first (see `references/spring-boot-2-to-3-migration.md`).
+OpenRewrite's `UpgradeSpringBoot_3_5` recipe handles most of the mechanical test changes
+below; hand-fix the rest. These are the **testing-specific** deltas of that leg — do them
+here, then continue with the 3.5 → 4.x sections below.
+
+- **`javax.*` → `jakarta.*` in test code.** Test fixtures/helpers importing
+  `javax.persistence`, `javax.servlet`, `javax.validation`, or `javax.annotation` move to
+  `jakarta.*`, same as production code (Jakarta EE recipe covers the bulk).
+- **JUnit 4 → JUnit 5.** Remove `@RunWith(SpringRunner.class)` /
+  `@RunWith(MockitoJUnitRunner.class)` and the `junit-vintage-engine` dependency once no
+  JUnit 4 tests remain. `org.junit.Test` → `org.junit.jupiter.api.Test`; `@Before`/`@After`
+  → `@BeforeEach`/`@AfterEach`; `@BeforeClass`/`@AfterClass` → `@BeforeAll`/`@AfterAll`;
+  `@RunWith` → `@ExtendWith`; `@Ignore` → `@Disabled`. The later JUnit 6 jump is small once
+  you are on JUnit 5 — see [JUnit 6](#junit-6).
+- **Spring Security test config.** `WebSecurityConfigurerAdapter` is removed in Spring
+  Security 6 (Boot 3.0) — test security config that subclassed it must move to a
+  `SecurityFilterChain` bean. `spring-security-test` and `@WithMockUser` are unchanged.
+- **Mock beans stay `@MockBean` on this leg.** On 3.0–3.3, `@MockBean`/`@SpyBean` are still
+  the norm; the switch to `@MockitoBean`/`@MockitoSpyBean` is the 3.4+/4.x change handled
+  [below](#mockbean--spybean--mockitobean--mockitospybean) — don't do it twice.
+- **Testcontainers stays 1.x on this leg.** Keep the 1.x coordinates for now;
+  `@ServiceConnection` is available from Boot 3.1 (before that, `@DynamicPropertySource`).
+  The 1.x → 2.0 coordinate/package migration is the 4.x change — see
+  [Testcontainers 2.0](#testcontainers-20).
+- **Test properties.** Renamed/removed test properties surface via
+  `spring-boot-properties-migrator` (add as a `runtime` dependency during the upgrade,
+  remove once stable) — same mechanism as production config.
+
+Once the build is green on Boot 3.5.x latest, continue with the sections below.
 
 ## @MockBean / @SpyBean → @MockitoBean / @MockitoSpyBean
 
