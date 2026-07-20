@@ -310,6 +310,32 @@ if grep -rqn "spring-retry" pom.xml build.gradle build.gradle.kts 2>/dev/null; t
     warn "spring-retry dependency found — Spring Retry is in maintenance mode, migrate to Framework 7 core retry"
 fi
 
+# --- Spring Kafka 4 ---
+# Run only when the project actually uses Spring Kafka, to avoid noise on non-Kafka apps.
+HAS_KAFKA=false
+if echo "$BUILD_FILES" | xargs grep -lq "spring-kafka\|spring-boot-starter-kafka" 2>/dev/null; then
+    HAS_KAFKA=true
+fi
+if [ "$HAS_KAFKA" = true ]; then
+    echo ""
+    echo "--- Spring Kafka 4 ---"
+    if echo "$BUILD_FILES" | xargs grep -Eq "spring-kafka-test[\"'<,)\\s]|spring-kafka-test$" 2>/dev/null; then
+        warn "spring-kafka-test dependency found — replace with spring-boot-starter-kafka-test (Boot 4)"
+    fi
+    if grep -rqn "EmbeddedKafkaZKBroker" src/ 2>/dev/null; then
+        fail "EmbeddedKafkaZKBroker found — removed in Spring Kafka 4, use EmbeddedKafkaBroker (KRaft)"
+    fi
+    if grep -rqEn "@EmbeddedKafka\\b[^)]*\\b(zookeeperPort|zkConnectionTimeout|zkSessionTimeout|kraft)\\s*=" src/ 2>/dev/null; then
+        fail "@EmbeddedKafka uses removed attributes (zookeeperPort/zkConnectionTimeout/zkSessionTimeout/kraft) — remove them"
+    fi
+    if grep -rqn "StreamBuilderFactoryBeanCustomizer" src/ 2>/dev/null; then
+        fail "StreamBuilderFactoryBeanCustomizer found — removed, use StreamsBuilderFactoryBeanConfigurer"
+    fi
+    if grep -rqn "import org.springframework.util.backoff.BackOffPolicy\|BackOffPolicy " src/ 2>/dev/null; then
+        warn "BackOffPolicy reference found — Spring Kafka 4 retry uses Framework's BackOff directly"
+    fi
+fi
+
 # --- HTTP Interfaces ---
 if grep -rqn "@HttpServiceClient" src/ 2>/dev/null; then
     fail "@HttpServiceClient found — annotation removed before Boot 4 final release, use @ImportHttpServices instead"

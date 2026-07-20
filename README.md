@@ -10,7 +10,7 @@ When installed, this skill gives Claude Code targeted guidance on the breaking c
 - **Two migration strategies**: All-at-once (9 sequential phases) or gradual upgrade (Day-1 baseline with 6 independent tracks)
 - **Compatibility bridges**: `spring-boot-starter-classic`, `spring-boot-jackson2`, `spring-security-access` for incremental adoption
 - **Minor version tracking**: Bridge removal timelines, deprecation promotions, and new features for 4.1, 4.2, and beyond
-- **Comprehensive coverage**: Build files, modular starters, Jackson 3, properties, package relocations, Spring Security 7, testing (MockitoBean, Testcontainers 2, JUnit 6), Spring Framework 7, Hibernate 7.1, observability (OpenTelemetry, Micrometer, Actuator), API versioning, HTTP interfaces and clients, AOT/native image, JSpecify nullability, resilience (retry, concurrency limiting)
+- **Comprehensive coverage**: Build files, modular starters, Jackson 3, properties, package relocations, Spring Security 7, testing (MockitoBean, Testcontainers 2, JUnit 6), Spring Framework 7, Hibernate 7.1, observability (OpenTelemetry, Micrometer, Actuator), API versioning, HTTP interfaces and clients, AOT/native image, JSpecify nullability, resilience (retry, concurrency limiting), Spring for Apache Kafka 4 (KRaft-only `@EmbeddedKafka`, `spring-boot-starter-kafka-test`, KIP-848 / KIP-932)
 - **Verification script**: Bridge-aware PASS/FAIL/WARN/BRIDGE checks
 - **Enterprise rollout**: Wave-based strategy for organizations with many services
 
@@ -55,6 +55,7 @@ references/
   api-versioning.md                   # Native API versioning strategies, semantic ranges, testing
   resilience-migration.md             # Spring Retry → Framework 7, @Retryable, @ConcurrencyLimit
   aot-native.md                       # AOT processing, BeanRegistrar, RuntimeHints, GraalVM 25
+  spring-kafka-4-migration.md         # Spring for Apache Kafka 4: Kafka 4 client/KRaft, spring-boot-starter-kafka-test, Jackson 3, Spring Retry removal, KIP-848 (rebalance) / KIP-932 (queues), OpenRewrite recipes
   minor-version-changes.md            # 4.x minor version changes, bridge removals, upgrade checklists
 scripts/
   verify_migration.sh                 # Bridge-aware verification (PASS/FAIL/WARN/BRIDGE)
