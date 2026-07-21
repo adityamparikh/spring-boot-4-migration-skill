@@ -20,14 +20,19 @@ parts of the 2 → 3 leg.
 ## Coming from Spring Boot 2.7? The 2 → 3 testing leg
 
 Reach **Boot 3.5.x latest** first (see `references/spring-boot-2-to-3-migration.md`).
-OpenRewrite's `UpgradeSpringBoot_3_5` recipe handles most of the mechanical test changes
-below; hand-fix the rest. These are the **testing-specific** deltas of that leg — do them
-here, then continue with the 3.5 → 4.x sections below.
+OpenRewrite's `UpgradeSpringBoot_3_5` recipe automates the `javax.*` → `jakarta.*` shift
+in test code (it chains in the `JakartaEE10` recipe), but it does **not** touch JUnit
+4 → 5 or Security test config — those need a separate recipe or hand-fixing. These are
+the **testing-specific** deltas of that leg — do them here, then continue with the
+3.5 → 4.x sections below.
 
 - **`javax.*` → `jakarta.*` in test code.** Test fixtures/helpers importing
   `javax.persistence`, `javax.servlet`, `javax.validation`, or `javax.annotation` move to
-  `jakarta.*`, same as production code (Jakarta EE recipe covers the bulk).
-- **JUnit 4 → JUnit 5.** Remove `@RunWith(SpringRunner.class)` /
+  `jakarta.*`, same as production code — automated by `UpgradeSpringBoot_3_5` (Jakarta EE
+  recipe covers the bulk).
+- **JUnit 4 → JUnit 5.** Not covered by `UpgradeSpringBoot_3_5` — run the separate
+  `org.openrewrite.java.testing.junit5.JUnit4to5Migration` recipe (module
+  `rewrite-testing-frameworks`), or hand-fix: remove `@RunWith(SpringRunner.class)` /
   `@RunWith(MockitoJUnitRunner.class)` and the `junit-vintage-engine` dependency once no
   JUnit 4 tests remain. `org.junit.Test` → `org.junit.jupiter.api.Test`; `@Before`/`@After`
   → `@BeforeEach`/`@AfterEach`; `@BeforeClass`/`@AfterClass` → `@BeforeAll`/`@AfterAll`;
