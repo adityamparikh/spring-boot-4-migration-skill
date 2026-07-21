@@ -78,37 +78,16 @@ versions table and per-tool upgrade commands.
 ## Coming from Spring Boot 2.7? Start here.
 
 If your project is on Spring Boot 2.7.x (or earlier), do the 2.7 → 3.5
-leg FIRST. The two scenarios chain:
+leg FIRST: `Boot 2.7.x → Boot 3.5.x latest → Boot 4.x`.
 
-```
-Boot 2.7.x  →  Boot 3.5.x latest  →  Boot 4.x
-              (this section's prelude)   (the 9 phases below)
-```
+Read `references/spring-boot-2-to-3-migration.md`. It covers the
+toolchain bump, 2.7.18 pre-flight, OpenRewrite recipes
+(`UpgradeSpringBoot_3_5` one-shot or per-minor), Jakarta namespace,
+Security 5 → 6, Hibernate 5 → 6, property migration, and observability
+migration to Micrometer Tracing.
 
-Read `references/spring-boot-2-to-3-migration.md` for the complete
-2.7 → 3.5 walkthrough. It covers:
-
-- **Toolchain bump**: Java 8/11 → 17 (re-run the 2.7 build on Java 17
-  BEFORE bumping Boot, so JDK incompats surface separately from Spring
-  upgrade churn)
-- **Pre-flight on 2.7.18 latest patch**: clear all deprecation warnings
-  and add `spring-boot-properties-migrator` for runtime diagnostics
-- **OpenRewrite automation**: one-shot via
-  `org.openrewrite.java.spring.boot3.UpgradeSpringBoot_3_5` (composes
-  every 3.0 → 3.5 step, including Jakarta migration), or step-by-step
-  per minor for large codebases
-- **Jakarta EE namespace migration** (`javax.*` → `jakarta.*`)
-- **Spring Security 5 → 6** (`WebSecurityConfigurerAdapter` removed,
-  lambda DSL required, `requestMatchers` over `antMatchers`)
-- **Hibernate 5 → 6** (`org.hibernate.orm` group ID, ID generator
-  changes, naming strategy, query handling)
-- **Per-minor highlights**: 3.0, 3.1, 3.2, 3.3, 3.4, 3.5
-- **Property migration** via Properties Migrator + OpenRewrite
-- **Observability migration** to Micrometer Tracing / Observation API
-
-When the 2 → 3 leg is verified (build passes on Boot 3.5 latest patch
-and Properties Migrator prints no warnings), **return to the
-Prerequisites section below** and proceed with Phases 1–9 for 3.5 → 4.0.
+Return here once `./mvnw verify` / `./gradlew build` passes on Boot 3.5
+latest patch and `spring-boot-properties-migrator` is quiet.
 
 ## Prerequisites
 
@@ -150,17 +129,7 @@ find-replace operations, then use this skill's phases to address the
 remaining manual changes (Security DSL rewrites, behavioral differences,
 property semantics, etc.).
 
-**For the 2.7 → 3.5 leg** (run before any 3 → 4 work):
-
-| Recipe ID | Coverage |
-|---|---|
-| `org.openrewrite.java.spring.boot3.UpgradeSpringBoot_3_5` | One-shot 2.x → 3.5: composes 3.0 → 3.1 → 3.2 → 3.3 → 3.4 → 3.5, including Jakarta migration, Spring Security 6, Hibernate 6 coordinates, property renames |
-| `org.openrewrite.java.spring.boot3.UpgradeSpringBoot_3_0` | Step-by-step: 2.7 → 3.0 only (Jakarta + Boot 3.0 baseline) |
-| `org.openrewrite.java.spring.boot3.UpgradeSpringBoot_3_1` … `_3_5` | Per-minor incremental upgrades |
-| `org.openrewrite.java.spring.boot3.SpringBootProperties_3_X` | Property key renames per minor version |
-| `org.openrewrite.java.migrate.jakarta.JakartaEE10` | Standalone Jakarta EE namespace migration (`javax.*` → `jakarta.*`) when applied outside the Boot upgrade |
-
-Catalog: [docs.openrewrite.org/recipes/java/spring/boot3](https://docs.openrewrite.org/recipes/java/spring/boot3). End-to-end 2 → 3 walkthrough: [docs.openrewrite.org/running-recipes/popular-recipe-guides/migrate-to-spring-3](https://docs.openrewrite.org/running-recipes/popular-recipe-guides/migrate-to-spring-3).
+**For the 2.7 → 3.5 leg** (run before any 3 → 4 work): see the recipe table in `references/spring-boot-2-to-3-migration.md` § 3 — `UpgradeSpringBoot_3_5` one-shot composes every step, or run per-minor for large codebases.
 
 **For the 3.5 → 4.0 leg**:
 
@@ -173,17 +142,7 @@ Catalog: [docs.openrewrite.org/recipes/java/spring/boot3](https://docs.openrewri
 
 See: [moderne.ai/blog/spring-boot-4x-migration-guide](https://www.moderne.ai/blog/spring-boot-4x-migration-guide). For the 4.0 recipe specifically: [docs.openrewrite.org/recipes/java/spring/boot4/upgradespringboot_4_0-community-edition](https://docs.openrewrite.org/recipes/java/spring/boot4/upgradespringboot_4_0-community-edition).
 
-**Invocation**:
-
-```bash
-# Maven
-./mvnw org.openrewrite.maven:rewrite-maven-plugin:run \
-  -Drewrite.recipeArtifactCoordinates=org.openrewrite.recipe:rewrite-spring:RELEASE \
-  -Drewrite.activeRecipes=<recipe-id>
-
-# Gradle
-./gradlew rewriteRun -Drewrite.activeRecipes=<recipe-id>
-```
+**Invocation**: `./mvnw org.openrewrite.maven:rewrite-maven-plugin:run -Drewrite.recipeArtifactCoordinates=org.openrewrite.recipe:rewrite-spring:RELEASE -Drewrite.activeRecipes=<recipe-id>` (Maven) or `./gradlew rewriteRun -Drewrite.activeRecipes=<recipe-id>` (Gradle).
 
 ## Migration Workflow (All-at-Once)
 
