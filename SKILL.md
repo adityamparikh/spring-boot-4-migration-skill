@@ -334,7 +334,7 @@ them. Check the "New and Noteworthy" section of each release's notes.
 | `references/api-changes.md` | Phase 4 — package relocations, removed APIs, renamed classes |
 | `references/observability-migration.md` | Phase 5 — OpenTelemetry starter, OTLP properties, module renames, Actuator decoupling |
 | `references/spring-security7.md` | Phase 6 / Track D — Security 7 breaking changes and DSL migration |
-| `references/testing-migration.md` | Phase 7 / Track E — MockBean, Testcontainers 2, JUnit 6, RestTestClient |
+| `references/testing-migration.md` | Phase 7 / Track E — 2.7→3 testing leg (JUnit 4→5, javax→jakarta tests), then 3.5→4: MockBean, Testcontainers 2, JUnit 6, RestTestClient |
 | `references/spring-framework7.md` | Phase 8 / Track F — Framework 7 changes, JSpecify, path matching |
 | `references/http-clients.md` | HTTP clients — RestClient, WebClient, @HttpExchange, Feign migration, RestTestClient |
 | `references/api-versioning.md` | API versioning — strategies, semantic ranges, client-side, deprecation, testing |
