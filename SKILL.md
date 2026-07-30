@@ -285,7 +285,7 @@ upgrading, check whether any bridges you depend on are being dropped:
 
 | Bridge | Introduced | Expected Removal |
 |--------|-----------|-----------------|
-| `spring-boot-jackson2` | 4.0 | 4.1 or 4.2 |
+| `spring-boot-jackson2` | 4.0 | 4.3.0 (per Javadoc `forRemoval`) |
 | `spring-boot-starter-classic` | 4.0 | 5.0 |
 | `spring-boot-starter-test-classic` | 4.0 | 5.0 |
 | Deprecated starter names | 4.0 | 5.0 |
