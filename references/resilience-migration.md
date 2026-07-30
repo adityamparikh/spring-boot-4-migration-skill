@@ -145,7 +145,10 @@ RabbitListenerRetrySettingsCustomizer listenerCustomizer = ...;
     <artifactId>rewrite-maven-plugin</artifactId>
     <configuration>
         <activeRecipes>
-            <recipe>org.openrewrite.java.spring.boot4.MigrateSpringRetryToSpringFramework7</recipe>
+            <!-- PAID: Moderne-only recipe, not in the free org.openrewrite catalog.
+                 Requires a Moderne subscription and the io.moderne.recipe:rewrite-spring
+                 artifact instead of org.openrewrite.recipe:rewrite-spring. -->
+            <recipe>io.moderne.java.spring.boot4.MigrateSpringRetryToSpringFramework7</recipe>
         </activeRecipes>
     </configuration>
 </plugin>
@@ -307,7 +310,7 @@ class RetryServiceTest {
     @Autowired
     private RetryService retryService;
 
-    @MockBean
+    @MockitoBean
     private ExternalService externalService;
 
     @Test
