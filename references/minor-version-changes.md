@@ -50,7 +50,7 @@ AND consult the official release notes for the target version.
 
 | Change | Impact | Action |
 |---|---|---|
-| **Everything deprecated in 4.0 has been removed.** | Any 4.0 deprecation warning you ignored is now a compile or startup failure. | Build on 4.0 with deprecation warnings visible and clear them *before* bumping. This is the single biggest 4.0 → 4.1 risk. |
+| **Classes, methods and properties deprecated in 4.0 have been removed.** | Any 4.0 deprecation warning you ignored is now a compile or startup failure. Scoped to deprecated *API* — the compatibility **modules** are separate and survive; see Bridge Status below. | Build on 4.0 with deprecation warnings visible and clear them *before* bumping. This is the single biggest 4.0 → 4.1 risk. |
 | **`layertools` jar mode removed** (deprecated in 4.0). | Image builds invoking `java -Djarmode=layertools` break. | Switch to `-Djarmode=tools extract --layers`, or the build plugin's layered-image support. |
 | **`-DskipTests` no longer skips AOT processing of tests.** | The Maven plugin now only reacts to `maven.test.skip`. CI relying on `-DskipTests` for speed still pays for AOT test processing. | Use `-Dmaven.test.skip=true` where you intend to skip AOT too. |
 | **jOOQ 3.20 requires Java 21+.** | Using jOOQ on Java 17 forces a JDK bump or an explicit jOOQ pin. | Move to Java 21+, or override the jOOQ version. |
@@ -111,7 +111,7 @@ AND consult the official release notes for the target version.
 
 | Bridge | Status | Expected in 4.2 |
 |--------|--------|-----------------|
-| `spring-boot-jackson2` | If not removed in 4.1 | Removal likely |
+| `spring-boot-jackson2` | Still present (deprecated) | **Not 4.2** — Javadoc `forRemoval` targets **4.3.0** |
 
 #### Upgrade Checklist
 
