@@ -471,7 +471,7 @@ before planning migration deadlines.
 |--------|-----------|---------------------|-----------------|
 | `spring-boot-starter-classic` | Boot 4.0 | Boot 4.0 (deprecated at launch) | Boot 5.0 |
 | `spring-boot-starter-test-classic` | Boot 4.0 | Boot 4.0 (deprecated at launch) | Boot 5.0 |
-| `spring-boot-jackson2` | Boot 4.0 | Boot 4.0 (deprecated at launch) | Boot 4.1 or 4.2 |
+| `spring-boot-jackson2` | Boot 4.0 | Boot 4.0 (deprecated at launch) | Boot 4.3.0 (per Javadoc `forRemoval`) |
 | `spring-security-access` | Security 7.0 | Security 7.0 (deprecated at launch) | Security 8.0 |
 | Deprecated starter names (web, aop) | Boot 4.0 | Boot 4.0 (deprecated at launch) | Boot 5.0 |
 | Deprecated property keys | Boot 4.0 | Boot 4.0 | Boot 5.0 |

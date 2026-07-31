@@ -32,6 +32,14 @@ Migrate Spring Boot 2.7.x applications to 3.5.x, then 3.5.x to 4.x,
 and stay current across 4.x minor versions, anchored to the official
 Spring Boot migration guides and release notes for each leg.
 
+## Currency
+
+**Last verified: 2026-07** (Spring Boot 4.1.0 / Framework 7.0.8 era). Facts here age. If the answer hinges on a
+version-sensitive fact — a removal target, a managed dependency version, an OpenRewrite recipe ID, a "deprecated in X" claim — and time has passed
+since the stamp above, spot-check current release notes or the tool's own source
+before asserting it. When current docs disagree with this file, **the docs win**:
+say so and note the line is stale.
+
 ## Scope: 2.7.x → 3.5.x → 4.x and 4.x Minor Versions
 
 This skill covers three scenarios:
@@ -138,7 +146,7 @@ property semantics, etc.).
 | `org.openrewrite.java.spring.boot4.UpgradeSpringBoot_4_0` (Community Edition variant available) | Boot 3.5 → 4.0 |
 | `org.openrewrite.java.spring.kafka.UpgradeSpringKafka_4_0` | Spring Kafka 3.x → 4.0 (use alongside the Boot 4 recipe — see `references/spring-kafka-4-migration.md`) |
 | `org.openrewrite.java.jackson.UpgradeJackson_2_3` | Jackson 2 → 3 package/import migration |
-| `org.openrewrite.java.spring.boot3.MigrateMockBeanToMockitoBean` (or the equivalent in `rewrite-spring`) | `@MockBean`/`@SpyBean` → `@MockitoBean`/`@MockitoSpyBean` |
+| `org.openrewrite.java.spring.boot4.ReplaceMockBeanAndSpyBean` | `@MockBean`/`@SpyBean` → `@MockitoBean`/`@MockitoSpyBean` |
 
 See: [moderne.ai/blog/spring-boot-4x-migration-guide](https://www.moderne.ai/blog/spring-boot-4x-migration-guide). For the 4.0 recipe specifically: [docs.openrewrite.org/recipes/java/spring/boot4/upgradespringboot_4_0-community-edition](https://docs.openrewrite.org/recipes/java/spring/boot4/upgradespringboot_4_0-community-edition).
 
@@ -277,7 +285,7 @@ upgrading, check whether any bridges you depend on are being dropped:
 
 | Bridge | Introduced | Expected Removal |
 |--------|-----------|-----------------|
-| `spring-boot-jackson2` | 4.0 | 4.1 or 4.2 |
+| `spring-boot-jackson2` | 4.0 | 4.3.0 (per Javadoc `forRemoval`) |
 | `spring-boot-starter-classic` | 4.0 | 5.0 |
 | `spring-boot-starter-test-classic` | 4.0 | 5.0 |
 | Deprecated starter names | 4.0 | 5.0 |

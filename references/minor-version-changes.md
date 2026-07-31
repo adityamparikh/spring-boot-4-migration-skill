@@ -42,51 +42,58 @@ AND consult the official release notes for the target version.
 
 ## Spring Boot 4.1
 
-**Status**: Not yet released. Expected mid-2026 based on historical
-release cadence (Spring Boot typically ships minor versions every ~6 months).
+**Status**: **Released — GA 2026-06-10.**
 
 **Official release notes**: https://github.com/spring-projects/spring-boot/wiki/Spring-Boot-4.1-Release-Notes
-(will be available when released)
 
-### Anticipated Changes
+### Breaking Changes (4.0 → 4.1)
 
-Based on the 4.0 deprecation timeline and Spring team communications:
+| Change | Impact | Action |
+|---|---|---|
+| **Classes, methods and properties deprecated in 4.0 have been removed.** | Any 4.0 deprecation warning you ignored is now a compile or startup failure. Scoped to deprecated *API* — the compatibility **modules** are separate and survive; see Bridge Status below. | Build on 4.0 with deprecation warnings visible and clear them *before* bumping. This is the single biggest 4.0 → 4.1 risk. |
+| **`layertools` jar mode removed** (deprecated in 4.0). | Image builds invoking `java -Djarmode=layertools` break. | Switch to `-Djarmode=tools extract --layers`, or the build plugin's layered-image support. |
+| **`-DskipTests` no longer skips AOT processing of tests.** | The Maven plugin now only reacts to `maven.test.skip`. CI relying on `-DskipTests` for speed still pays for AOT test processing. | Use `-Dmaven.test.skip=true` where you intend to skip AOT too. |
+| **jOOQ 3.20 requires Java 21+.** | Using jOOQ on Java 17 forces a JDK bump or an explicit jOOQ pin. | Move to Java 21+, or override the jOOQ version. |
+| **Apache Derby support deprecated.** | The Derby project was retired upstream, so Boot's integration is deprecated (not yet removed). | Plan a move off Derby — H2 for tests, or a real engine via Testcontainers. |
 
-#### Bridge Removals (Likely)
+### Bridge Status
 
-| Bridge | Status in 4.0 | Expected in 4.1 |
-|--------|--------------|-----------------|
-| `spring-boot-jackson2` | Deprecated | Possible removal — prioritize Jackson 3 migration (Track B) |
+| Bridge | Status in 4.1 | Removal target |
+|---|---|---|
+| `spring-boot-jackson2` | Present, deprecated | **4.3.0**, per the Javadoc `forRemoval` metadata — not 4.1 or 4.2 as this file previously speculated. Complete Track B (Jackson 3) before 4.3. |
 
-**Action required**: If you are still using `spring-boot-jackson2`, complete
-Track B (Jackson 3 migration) before upgrading to 4.1. Check the official
-4.1 release notes when available to confirm.
+### Dependency Version Changes
 
-#### Known Deprecation Promotions
+| Dependency | Managed by 4.1 |
+|---|---|
+| Spring Framework | 7.0.8 |
+| Spring Security | 7.1.0 |
+| Spring Data BOM | 2026.0.0 |
+| Kotlin | 2.3.21 |
+| Hibernate Validator | 9.1 |
 
-Items deprecated in 4.0 that may see further action in 4.1:
-- Deprecated starter names (e.g., `spring-boot-starter-web`) — still
-  expected to work in 4.1, removed in 5.0
-- `spring-boot-starter-classic` / `spring-boot-starter-test-classic` —
-  still expected to work in 4.1, removed in 5.0
+### New Features
 
-#### New Features to Watch For
-
-Spring Boot minor versions typically introduce:
-- New auto-configuration modules
-- Additional starter modules
-- Updated dependency versions (Spring Framework, Hibernate, etc.)
-- New properties and configuration options
-- Performance improvements
+- **gRPC** — first-class support for writing *and testing* gRPC servers and clients (Netty-backed standalone, or Servlet integration over HTTP/2).
+- **Lazy JDBC connections** — `spring.datasource.connection-fetch` (`eager` | `lazy`). `lazy` wraps the pooled `DataSource` in `LazyConnectionDataSourceProxy`, so a physical connection is taken only when a statement actually runs — useful for `@Transactional` paths that may never touch the DB.
+- **SSRF mitigation** — `InetAddressFilter` for blocking outgoing requests by address.
+- **Jackson factory config** — `spring.jackson.read.*` / `spring.jackson.write.*`.
+- **Cookie handling** — `withCookieHandling` and `spring.http.clients.cookie-handling`.
+- **Config import encoding** — `spring.config.import=classpath:import.properties[encoding=utf-8]`.
+- **`@RedisListener`** endpoint auto-configuration.
+- **Log4j rotation** — size, time, size-and-time, and cron strategies.
+- **SSL bundles** for embedded LDAP (`spring.ldap.embedded.ssl.bundle`) and RabbitMQ Streams (`spring.rabbitmq.stream.ssl.enabled`, `.ssl.bundle`).
+- **Mongo batch schema** — `spring.batch.data.mongo.schema.initialize`.
 
 ### Upgrade Checklist for 4.0 → 4.1
 
-- [ ] Confirm `spring-boot-jackson2` bridge status in official release notes
-- [ ] Complete Track B (Jackson 3) if bridge is removed
-- [ ] Update Spring Boot version to 4.1.x
-- [ ] Run full build and test suite
-- [ ] Review new deprecation warnings
-- [ ] Check for updated dependency minimum versions
+- [ ] On 4.0, surface and clear **all** deprecation warnings — 4.1 removed them
+- [ ] Replace `-Djarmode=layertools` with `-Djarmode=tools extract --layers`
+- [ ] Replace `-DskipTests` with `-Dmaven.test.skip=true` where AOT should also be skipped
+- [ ] If using jOOQ, confirm Java 21+ or pin the jOOQ version
+- [ ] If using Derby, plan the move off it
+- [ ] Bump to 4.1.x, then run the full build and test suite
+- [ ] Review new deprecation warnings — these become 4.2 removals
 - [ ] Run `verify_migration.sh`
 
 ---
@@ -104,7 +111,7 @@ Spring Boot minor versions typically introduce:
 
 | Bridge | Status | Expected in 4.2 |
 |--------|--------|-----------------|
-| `spring-boot-jackson2` | If not removed in 4.1 | Removal likely |
+| `spring-boot-jackson2` | Still present (deprecated) | **Not 4.2** — Javadoc `forRemoval` targets **4.3.0** |
 
 #### Upgrade Checklist
 
